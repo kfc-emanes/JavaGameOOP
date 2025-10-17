@@ -1,0 +1,1 @@
+base game attributes go here. characters, etc.
