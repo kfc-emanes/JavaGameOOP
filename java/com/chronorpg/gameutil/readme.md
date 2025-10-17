@@ -1,0 +1,1 @@
+gameutil serves as a folder for helper functions we make during dev. cheers
