@@ -1,3 +1,3 @@
 # JavaGameOOP
 
-drop the good stuff here thx uwu
+drop the good stuff here thx
