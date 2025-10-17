@@ -5,4 +5,4 @@ Character.java // base class for every entity that can fight (chars, generals, b
 --> Enemy.java // extends from character.java. adds hostile npc behavior
 Skill.java // base for skills and ults. incl name, damageType, cost, cd
 StatusEffect.java // handling for applied effects (burnDamage, shield, etc)
-StatBlock.java // holding numeric stats
+StatBlock.java // holds numeric stats (atk, def, hp etc)
