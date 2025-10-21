@@ -1,18 +1,18 @@
 package com.ror.gamemodel;
 
-import java.util.List;
+import java.util.*;
 
-public class Character {
-    private String name;
-    private int maxHealth;
-    private int currHealth;
-    private int atk;
-    private int def;
-    private Skill[] skills;
+public class Entity {
+    protected String name;
+    protected int maxHealth;
+    protected int currHealth;
+    protected int atk;
+    protected int def;
+    protected Skill[] skills;
    //private int spd; spd -> used for character attacking order since this is turn-based. many turn-based games use this
 
 
-public Character(String name, int maxHealth, int currHealth, int atk, int def) {
+public Entity(String name, int maxHealth, int currHealth, int atk, int def) {
     this.name = name;
     this.maxHealth = maxHealth;
     this.currHealth = currHealth;
@@ -25,19 +25,19 @@ public String getName() {
     return name;
 }
 
-public String getMaxHealth() {
+public int getMaxHealth() {
     return maxHealth;
 }
 
-public String getCurrentHealth() {
+public int getCurrentHealth() {
     return currentHealth;
 }
 
-public String getAtk() {
+public int getAtk() {
     return atk;
 }
 
-public String getDef() {
+public int getDef() {
     return def;
 }
 
@@ -59,7 +59,7 @@ public void takeDamage(int dmg) {
     System.out.println(name + " took " + dmg + " damage! " + name + " has " + currHealth + " health left.");
 }
 
-public void attack(Character target) { //target is the character being attacked. not defined here, but will be defined when called
+public void attack(Entity target) { //target is the character being attacked. not defined here, but will be defined when called
     System.out.println(name + " attacks " + target.getName() + " for " + atk + " damage!");
     target.takeDamage(atk);
 }
@@ -79,7 +79,7 @@ public void setSkill(int slot, Skill skill) {
     skills[slot] = skill;
 }
 
-public void useSkill(int slot, Character target) {
+public void useSkill(int slot, Entity target) {
     
         System.out.println(name + " uses " + skill.getName() + " on " + target.getName() + "!");
     
