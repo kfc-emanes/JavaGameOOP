@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch RealmsOfRiftborne",
+            "request": "launch",
+            "mainClass": "RealmsOfRiftborne",
+            "projectName": "JavaGameOOP",
+            "cwd": "${workspaceFolder}",
+            "vmArgs": "",
+            "args": "",
+            "classPaths": [
+                "${workspaceFolder}/com/ror/gamemodel",
+                "${workspaceFolder}/com/ror/gameengine",
+                "${workspaceFolder}"
+            ]
+        }
+    ]
+}
