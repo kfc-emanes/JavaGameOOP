@@ -1,3 +1,5 @@
+//EXPERIMENTAL PHASE
+
 package com.ror.gamemodel;
 
 public class Andrew extends Entity {
