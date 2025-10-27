@@ -10,3 +10,6 @@ StatBlock.java // holds numeric stats (atk, def, hp etc)
 test classes:
 Andrew.java -> main protag
 Goblin.java -> base enemy
+
+
+TODO: ORGANIZE ALL FILES
