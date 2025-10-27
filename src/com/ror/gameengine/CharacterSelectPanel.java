@@ -12,6 +12,7 @@ public class CharacterSelectPanel extends JPanel {
     private JButton slot4Button;
     private JButton slot5Button;
 
+//CHARACTER SELECT PANEL, EA STYLE
     public CharacterSelectPanel(ActionListener listener) {
         setLayout(new BorderLayout());
         setBackground(Color.DARK_GRAY);
