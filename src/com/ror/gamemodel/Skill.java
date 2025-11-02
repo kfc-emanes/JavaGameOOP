@@ -4,13 +4,25 @@ public class Skill {
     private String name;
     private int power; 
     private String type; // e.g. "Attack" or "Heal"
+    private int manaCost;       // added mana cost attribute
+    private double accuracy;
+    private double critChance;
+    private int level;
+    private int maxLevel;
 
-    public Skill(String name, int power, String type) {
+    public Skill(int manaCost, String name, int power, String type, double accuracy, double critChance) {
         this.name = name;
         this.power = power;
         this.type = type;
+        this.manaCost = manaCost;
+        this.accuracy = accuracy;
+        this.critChance = critChance;
     }
 
+    public int getManaCost() { 
+        
+        return manaCost;
+    }
     public String getName() {
         return name;
     }
@@ -21,6 +33,12 @@ public class Skill {
 
     public String getType() {
         return type;
+    }
+    public double getAccuracy() {
+        return accuracy;
+    }
+    public double getCritChance() {
+        return critChance;
     }
 
     // Updated: use Entity, not Character
@@ -67,6 +85,16 @@ public class Skill {
 
     public int getCurrentCooldown() {
         return currentCooldown;
+    }
+
+    public void levelUp() { // updated - level up method
+        if (level < maxLevel) {
+            level++;
+            power += 5;
+            System.out.println(name + " leveled up to " + level + "! Power increased to " + power);
+        } else {
+            System.out.println(name + " is already at max level.");
+        }
     }
 
 }
