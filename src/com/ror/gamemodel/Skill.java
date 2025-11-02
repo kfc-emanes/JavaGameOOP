@@ -2,6 +2,31 @@ package com.ror.gamemodel;
 
 public class Skill {
     private String name;
+<<<<<<< HEAD
+    private int power; 
+    private String type; // e.g. "Attack" or "Heal"
+    private int manaCost;       // added mana cost attribute
+    private double accuracy;
+    private double critChance;
+    private int level;
+    private int maxLevel;
+
+    public Skill(int manaCost, String name, int power, String type, double accuracy, double critChance) {
+        this.name = name;
+        this.power = power;
+        this.type = type;
+        this.manaCost = manaCost;
+        this.accuracy = accuracy;
+        this.critChance = critChance;
+    }
+
+    public int getManaCost() { 
+        
+        return manaCost;
+    }
+    public String getName() {
+        return name;
+=======
     private int power;
     private String type;
     private int cooldown;
@@ -19,6 +44,7 @@ public class Skill {
     // Optional shortcut for skills with no cooldown
     public Skill(String name, int power, String type) {
         this(name, power, type, 0);
+>>>>>>> 698ff8457b025bce4e7d3a5edee1aad27d4806d2
     }
 
     public String getName() { return name; }
@@ -35,6 +61,12 @@ public class Skill {
         if (cooldown > 0) {
             currentCooldown = cooldown;
         }
+    }
+    public double getAccuracy() {
+        return accuracy;
+    }
+    public double getCritChance() {
+        return critChance;
     }
 
     public void reduceCooldown() {
@@ -62,4 +94,45 @@ public class Skill {
             System.out.println("Unknown skill type: " + type);
         }
     }
+<<<<<<< HEAD
+    private int cooldown;
+    private int currentCooldown;
+
+    public Skill(String name, int power, String type, int cooldown) {
+        this.name = name;
+        this.power = power;
+        this.type = type;
+        this.cooldown = cooldown;
+        this.currentCooldown = 0;
+    }
+
+    public boolean isOnCooldown() {
+        return currentCooldown > 0;
+    }
+
+    public void reduceCooldown() {
+        if (currentCooldown > 0) currentCooldown--;
+    }
+
+    public void triggerCooldown() {
+        currentCooldown = cooldown;
+    }
+
+    public int getCurrentCooldown() {
+        return currentCooldown;
+    }
+
+    public void levelUp() { // updated - level up method
+        if (level < maxLevel) {
+            level++;
+            power += 5;
+            System.out.println(name + " leveled up to " + level + "! Power increased to " + power);
+        } else {
+            System.out.println(name + " is already at max level.");
+        }
+    }
+
 }
+=======
+}
+>>>>>>> 698ff8457b025bce4e7d3a5edee1aad27d4806d2
