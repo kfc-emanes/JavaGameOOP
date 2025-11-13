@@ -8,10 +8,12 @@ public class CharacterSelectPanel extends JPanel {
     private JButton andrewButton;
     private JButton flameWarriorButton;
     private JButton skyMageButton;
-    private JButton slot2Button;
-    private JButton slot3Button;
-    private JButton slot4Button;
-    private JButton slot5Button;
+    private JButton NyxButton;    
+    private JButton TharnButton;  
+    //private JButton slot2Button;
+    //private JButton slot3Button;
+    //private JButton slot4Button;
+    //private JButton slot5Button;
 
     private GameFrame parent; // ✅ reference to GameFrame
 
@@ -32,14 +34,14 @@ public class CharacterSelectPanel extends JPanel {
         andrewButton = new JButton("<html>Andrew<br/>(Timeblade)</html>");
         flameWarriorButton = new JButton("<html>Drax<br/>(Flame Warrior)</html>");
         skyMageButton = new JButton("<html>Flashey<br/>(Sky Mage)</html>");
-        slot4Button = new JButton("Pay 200PHP to unlock");
-        slot5Button = new JButton("Pay 200PHP to unlock");
+        NyxButton = new JButton("<html>Nyx<br/>(Assassin)</html>");
+        TharnButton = new JButton("<html>Tharn<br/>(Stone Golem)</html>");
 
         characterPanel.add(andrewButton);
         characterPanel.add(flameWarriorButton);
         characterPanel.add(skyMageButton);
-        characterPanel.add(slot4Button);
-        characterPanel.add(slot5Button);
+        characterPanel.add(NyxButton);
+        characterPanel.add(TharnButton);
 
         // --- Back Button ---
         backButton = new JButton("Back to Menu");
@@ -54,10 +56,13 @@ public class CharacterSelectPanel extends JPanel {
         backButton.addActionListener(e -> parent.showMenu());
         flameWarriorButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.FlameWarrior()));
         skyMageButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.SkyMage()));
+        NyxButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Nyx()));
+        TharnButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Tharn()));
+
 
         // Disable locked slots
-        slot4Button.setEnabled(false);
-        slot5Button.setEnabled(false);
+        //slot4Button.setEnabled(false);
+       // slot5Button.setEnabled(false);
     }
 
     // --- Getters (Optional, for flexibility) ---
@@ -65,6 +70,6 @@ public class CharacterSelectPanel extends JPanel {
     public JButton getBackButton() { return backButton; }
     public JButton getFlameWarriorButton() { return flameWarriorButton; }
     public JButton getSkyMageButton() { return skyMageButton; }
-    public JButton getSlot4Button() { return slot4Button; }
-    public JButton getSlot5Button() { return slot5Button; }
+    public JButton getNyxButton() { return NyxButton; }
+    public JButton getTharnButton() { return TharnButton; }
 }
