@@ -2,7 +2,6 @@ package com.ror.gamemodel;
 
 public class Skill {
     private String name;
-<<<<<<< HEAD
     private int power; 
     private String type; // e.g. "Attack" or "Heal"
     private int manaCost;       // added mana cost attribute
@@ -26,25 +25,6 @@ public class Skill {
     }
     public String getName() {
         return name;
-=======
-    private int power;
-    private String type;
-    private int cooldown;
-    private int currentCooldown;
-
-    // Constructor for skills with cooldown
-    public Skill(String name, int power, String type, int cooldown) {
-        this.name = name;
-        this.power = power;
-        this.type = type;
-        this.cooldown = cooldown;
-        this.currentCooldown = 0;
-    }
-
-    // Optional shortcut for skills with no cooldown
-    public Skill(String name, int power, String type) {
-        this(name, power, type, 0);
->>>>>>> 698ff8457b025bce4e7d3a5edee1aad27d4806d2
     }
 
     public String getName() { return name; }
@@ -94,7 +74,6 @@ public class Skill {
             System.out.println("Unknown skill type: " + type);
         }
     }
-<<<<<<< HEAD
     private int cooldown;
     private int currentCooldown;
 
@@ -133,6 +112,3 @@ public class Skill {
     }
 
 }
-=======
-}
->>>>>>> 698ff8457b025bce4e7d3a5edee1aad27d4806d2

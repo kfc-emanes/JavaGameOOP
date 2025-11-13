@@ -20,6 +20,8 @@ public class BattlePanel extends JPanel {
     private int delayedDamageToEnemy = 0;
     private int lastDamageTakenByPlayer = 0;
     private String mode = "Tutorial";
+    private WorldManager worldManager = new WorldManager();
+
 
     public BattlePanel(GameFrame parent) {
         this.parent = parent;
@@ -227,13 +229,14 @@ public class BattlePanel extends JPanel {
     log("Your turn! Choose your next skill.");
 }
 
-    private void handleEnemyDefeat(Entity defeatedEnemy) {
+   private void handleEnemyDefeat(Entity defeatedEnemy) {
     log("🏆 You defeated the " + defeatedEnemy.getName() + "!");
     disableSkillButtons();
 
     Timer nextBattleTimer = new Timer(700, e -> {
         ((Timer) e.getSource()).stop();
 
+        // --- TUTORIAL PHASE ---
         if (mode.equals("Tutorial")) {
             if (defeatedEnemy instanceof Goblin) {
                 JOptionPane.showMessageDialog(this,
@@ -243,7 +246,7 @@ public class BattlePanel extends JPanel {
 
                 enemy = new Cultist();
                 healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName()); // 🟢 Update name
+                enemyNameLabel.setText(enemy.getName());
                 log("🔥 A new foe approaches: " + enemy.getName() + "!");
                 updateHPLabels();
                 enableSkillButtons();
@@ -257,18 +260,18 @@ public class BattlePanel extends JPanel {
                     "A surge of energy pulls you through — the Realms shift.",
                     "End of Tutorial", JOptionPane.INFORMATION_MESSAGE);
 
-                mode = "RealDeal";
+                mode = "Realm1";
                 JOptionPane.showMessageDialog(this,
-                    "⚔️ REAL DEAL BEGINS ⚔️\n\n" +
+                    "🌩️ REALM I: AETHERIA 🌩️\n\n" +
                     "You awaken beneath stormy skies — Aetheria.\n" +
-                    "A Sky Serpent descends from the clouds!",
+                    "Sky Serpents circle above, lightning dancing across their scales.",
                     "Chapter I: The Rift Opens",
                     JOptionPane.INFORMATION_MESSAGE);
 
                 enemy = new SkySerpent();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
-                log("🔥 A new foe approaches: " + enemy.getName() + "!");
+                log("⚔️ A new foe approaches: " + enemy.getName() + "!");
                 updateHPLabels();
                 enableSkillButtons();
                 playerTurn = true;
@@ -277,30 +280,54 @@ public class BattlePanel extends JPanel {
             }
         }
 
-        if (mode.equals("RealDeal")) {
+        // --- REALM I: AETHERIA ---
+        if (mode.equals("Realm1")) {
             if (defeatedEnemy instanceof SkySerpent) {
                 JOptionPane.showMessageDialog(this,
-                    "The Sky Serpent bursts into feathers and wind.\n" +
-                    "The air crackles... Molten Imps crawl from the ashes.",
-                    "From Sky to Flame", JOptionPane.INFORMATION_MESSAGE);
+                    "The Sky Serpent bursts into feathers and lightning.\n" +
+                    "From the thunderclouds above descends General Zephra, Storm Mage of the Rift.",
+                    "⚡ Boss Battle: General Zephra ⚡",
+                    JOptionPane.INFORMATION_MESSAGE);
 
+                enemy = new GeneralZephra();
+                healBetweenBattles();
+                enemyNameLabel.setText(enemy.getName());
+                log("⚡ A new foe approaches: " + enemy.getName() + "!");
+                updateHPLabels();
+                enableSkillButtons();
+                playerTurn = true;
+                return;
+            }
+
+            if (defeatedEnemy instanceof GeneralZephra) {
+                JOptionPane.showMessageDialog(this,
+                    "Zephra’s thunderbird screeches as lightning fades.\n" +
+                    "A fiery rift tears open beneath you...",
+                    "🔥 Transition to Realm II: Ignara 🔥",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+                mode = "Realm2";
                 enemy = new MoltenImp();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
-                log("🔥 A new foe approaches: " + enemy.getName() + "!");
+                log("🔥 Realm II: Ignara — molten chaos awaits!");
                 updateHPLabels();
                 enableSkillButtons();
                 playerTurn = true;
                 return;
             }
+        }
 
+        // --- REALM II: IGNARA ---
+        if (mode.equals("Realm2")) {
             if (defeatedEnemy instanceof MoltenImp) {
                 JOptionPane.showMessageDialog(this,
-                    "The last Imp explodes in fire.\n" +
-                    "Dark smoke gathers — and from it, a Shadow Creeper forms.",
-                    "Whispers of Noxterra", JOptionPane.INFORMATION_MESSAGE);
+                    "The last Molten Imp bursts into flame...\n" +
+                    "From the magma rises General Vulkrag, the Infernal Commander!",
+                    "🔥 Boss Battle: General Vulkrag 🔥",
+                    JOptionPane.INFORMATION_MESSAGE);
 
-                enemy = new ShadowCreeper();
+                enemy = new GeneralVulkrag();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("🔥 A new foe approaches: " + enemy.getName() + "!");
@@ -310,12 +337,52 @@ public class BattlePanel extends JPanel {
                 return;
             }
 
+            if (defeatedEnemy instanceof GeneralVulkrag) {
+                JOptionPane.showMessageDialog(this,
+                    "Vulkrag’s molten armor cracks apart.\n" +
+                    "Darkness seeps in from the edges of reality...",
+                    "🌑 Transition to Realm III: Noxterra 🌑",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+                mode = "Realm3";
+                enemy = new ShadowCreeper();
+                healBetweenBattles();
+                enemyNameLabel.setText(enemy.getName());
+                log("🌑 Realm III: Noxterra — the shadows hunger...");
+                updateHPLabels();
+                enableSkillButtons();
+                playerTurn = true;
+                return;
+            }
+        }
+
+        // --- REALM III: NOXTERRA ---
+        if (mode.equals("Realm3")) {
             if (defeatedEnemy instanceof ShadowCreeper) {
                 JOptionPane.showMessageDialog(this,
-                    "The Shadow Creeper dissolves into dust...\n" +
-                    "You’ve survived the Real Deal.\n\n🔥 CHAPTER I COMPLETE 🔥",
-                    "Victory!", JOptionPane.INFORMATION_MESSAGE);
-                log("🎉 You won the Real Deal campaign!");
+                    "The Shadow Creeper dissolves into mist...\n" +
+                    "A dark laughter echoes — the Rift Lord himself descends.",
+                    "💀 Final Boss: Lord Vorthnar 💀",
+                    JOptionPane.INFORMATION_MESSAGE);
+
+                enemy = new Vorthnar();
+                healBetweenBattles();
+                enemyNameLabel.setText(enemy.getName());
+                log("💀 The final boss approaches: " + enemy.getName() + "!");
+                updateHPLabels();
+                enableSkillButtons();
+                playerTurn = true;
+                return;
+            }
+
+            if (defeatedEnemy instanceof Vorthnar) {
+                JOptionPane.showMessageDialog(this,
+                    "Vorthnar collapses — time itself shatters, then reforms.\n\n" +
+                    "🏆 CHAPTER III COMPLETE 🏆\nYou have conquered the Realms!",
+                    "🎉 Victory!", JOptionPane.INFORMATION_MESSAGE);
+
+                log("🎉 You defeated Lord Vorthnar! Chapter III complete!");
+                disableSkillButtons();
                 return;
             }
         }
@@ -323,6 +390,7 @@ public class BattlePanel extends JPanel {
     nextBattleTimer.setRepeats(false);
     nextBattleTimer.start();
 }
+
 
     private void enableBackButtonForRealDeal() {
     backBtn.setEnabled(true);
