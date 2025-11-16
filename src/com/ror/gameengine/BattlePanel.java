@@ -114,8 +114,8 @@ public class BattlePanel extends JPanel {
         skillBtn3.addActionListener(e -> playerUseSkill(2));
 
         battleLog.setText("");
-        log("⚔️ Battle Start! " + player.getName() + " vs " + enemy.getName());
-        log("Choose a skill to begin your turn.");
+        log("⚔️ The Battle Begins. It's " + player.getName() + " VS " + enemy.getName() + "!");
+        log("\nChoose a skill to begin your turn.");
     }
 
     private void clearListeners() {
@@ -177,6 +177,15 @@ public class BattlePanel extends JPanel {
         });
         timer.setRepeats(false);
         timer.start();
+        
+    }
+
+    private void updateSkillButtons() {
+        Skill[] skills = player.getSkills();
+
+        skillBtn1.setText(skills[0].getName() + (skills[0].isOnCooldown() ? " (CD: " + skills[0].getCurrentCooldown() + ")" : ""));
+        skillBtn2.setText(skills[1].getName() + (skills[1].isOnCooldown() ? " (CD: " + skills[1].getCurrentCooldown() + ")" : ""));
+        skillBtn3.setText(skills[2].getName() + (skills[2].isOnCooldown() ? " (CD: " + skills[2].getCurrentCooldown() + ")" : ""));
     }
 
     private void enemyTurn() {
@@ -215,6 +224,7 @@ public class BattlePanel extends JPanel {
     // --- Cooldown reductions ---
     for (Skill skill : player.getSkills()) {
         skill.reduceCooldown();
+        updateSkillButtons();
     }
 
     // --- End turn check ---
@@ -424,7 +434,6 @@ public class BattlePanel extends JPanel {
         }
     });
 }
-
 
     private void healBetweenBattles() {
         int healAmount = 60;
