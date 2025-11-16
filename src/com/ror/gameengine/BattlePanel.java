@@ -87,7 +87,7 @@ public class BattlePanel extends JPanel {
         backBtn.setEnabled(false);
 
     }
-
+    
     public void startBattle(Entity chosenPlayer) {
         this.player = chosenPlayer;
         this.enemy = new Goblin(); // tutorial starts here
@@ -227,7 +227,11 @@ public class BattlePanel extends JPanel {
     // --- Player’s next turn ---
     playerTurn = true;
     log("Your turn! Choose your next skill.");
-}
+    }
+    private void clearBattleLog() {
+    battleLog.setText("");
+            }
+
 
    private void handleEnemyDefeat(Entity defeatedEnemy) {
     log("🏆 You defeated the " + defeatedEnemy.getName() + "!");
@@ -245,6 +249,7 @@ public class BattlePanel extends JPanel {
                     "Tutorial: Part II", JOptionPane.INFORMATION_MESSAGE);
 
                 enemy = new Cultist();
+                clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("🔥 A new foe approaches: " + enemy.getName() + "!");
@@ -268,7 +273,8 @@ public class BattlePanel extends JPanel {
                     "Chapter I: The Rift Opens",
                     JOptionPane.INFORMATION_MESSAGE);
 
-                enemy = new SkySerpent();
+                enemy = new SkySerpent();   
+                clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("⚔️ A new foe approaches: " + enemy.getName() + "!");
@@ -290,6 +296,7 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
 
                 enemy = new GeneralZephra();
+                clearBattleLog();                
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("⚡ A new foe approaches: " + enemy.getName() + "!");
@@ -308,6 +315,7 @@ public class BattlePanel extends JPanel {
 
                 mode = "Realm2";
                 enemy = new MoltenImp();
+                clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("🔥 Realm II: Ignara — molten chaos awaits!");
@@ -328,6 +336,7 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
 
                 enemy = new GeneralVulkrag();
+                clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("🔥 A new foe approaches: " + enemy.getName() + "!");
@@ -346,6 +355,7 @@ public class BattlePanel extends JPanel {
 
                 mode = "Realm3";
                 enemy = new ShadowCreeper();
+                clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("🌑 Realm III: Noxterra — the shadows hunger...");
@@ -366,6 +376,7 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
 
                 enemy = new Vorthnar();
+                clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
                 log("💀 The final boss approaches: " + enemy.getName() + "!");
