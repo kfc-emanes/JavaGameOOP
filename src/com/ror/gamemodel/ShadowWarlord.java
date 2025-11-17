@@ -5,3 +5,4 @@ public class ShadowWarlord extends Entity {
         super("Shadow Warlord", 250, 250, 50, 14); // poison and dark drain master
     }
 }
+

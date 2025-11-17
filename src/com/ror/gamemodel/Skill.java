@@ -23,9 +23,6 @@ public class Skill {
         
         return manaCost;
     }
-    public String getName() {
-        return name;
-    }
 
     public String getName() { return name; }
     public int getPower() { return power; }
@@ -33,26 +30,11 @@ public class Skill {
     public int getCooldown() { return cooldown; }
     public int getCurrentCooldown() { return currentCooldown; }
 
-    public boolean isOnCooldown() {
-        return currentCooldown > 0;
-    }
-
-    public void triggerCooldown() {
-        if (cooldown > 0) {
-            currentCooldown = cooldown;
-        }
-    }
     public double getAccuracy() {
         return accuracy;
     }
     public double getCritChance() {
         return critChance;
-    }
-
-    public void reduceCooldown() {
-        if (currentCooldown > 0) {
-            currentCooldown--;
-        }
     }
 
     // For logging/testing
@@ -95,10 +77,6 @@ public class Skill {
 
     public void triggerCooldown() {
         currentCooldown = cooldown;
-    }
-
-    public int getCurrentCooldown() {
-        return currentCooldown;
     }
 
     public void levelUp() { // updated - level up method

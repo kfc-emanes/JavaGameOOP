@@ -15,3 +15,4 @@ public class Andrew extends Entity {
         setSkills(new Skill[] { chronoSlash, timeShield, reverseFlow });
     }
 }
+
