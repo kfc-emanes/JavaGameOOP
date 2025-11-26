@@ -1,4 +1,6 @@
-package com.ror.gamemodel;
+package com.ror.gamemodel.Playable;
+
+import com.ror.gamemodel.*;
 
 public class Nyx extends Entity {
     public Nyx() {

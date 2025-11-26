@@ -1,4 +1,6 @@
-package com.ror.gamemodel;
+package com.ror.gamemodel.Playable;
+
+import com.ror.gamemodel.*;
 
 public class Tharn extends Entity {
     public Tharn() {

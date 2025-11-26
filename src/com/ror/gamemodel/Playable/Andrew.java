@@ -1,6 +1,6 @@
-//EXPERIMENTAL PHASE
+package com.ror.gamemodel.Playable;
 
-package com.ror.gamemodel;
+import com.ror.gamemodel.*;
 
 public class Andrew extends Entity {
     public Andrew() {

@@ -1,5 +1,6 @@
 package com.ror.gameengine;
 
+import com.ror.gamemodel.*;
 import javax.swing.*;
 import java.awt.*;
 
@@ -44,7 +45,7 @@ public class CharacterSelectPanel extends JPanel {
         characterPanel.add(TharnButton);
 
         // --- Back Button ---
-        backButton = new JButton("Back to Menu");
+        backButton = new JButton("Back to Menu >>>");
 
         // --- Layout ---
         add(title, BorderLayout.NORTH);
@@ -52,12 +53,12 @@ public class CharacterSelectPanel extends JPanel {
         add(backButton, BorderLayout.SOUTH);
 
         // --- Button Logic ---
-        andrewButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Andrew()));
+        andrewButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.Andrew()));
         backButton.addActionListener(e -> parent.showMenu());
-        flameWarriorButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.FlameWarrior()));
-        skyMageButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.SkyMage()));
-        NyxButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Nyx()));
-        TharnButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Tharn()));
+        flameWarriorButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.FlameWarrior()));
+        skyMageButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.SkyMage()));
+        NyxButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.Nyx()));
+        TharnButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.Tharn()));
 
 
         // Disable locked slots
