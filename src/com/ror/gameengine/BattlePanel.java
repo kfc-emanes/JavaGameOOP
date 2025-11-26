@@ -56,7 +56,7 @@ public class BattlePanel extends JPanel {
         battleLog.setEditable(false);
         battleLog.setBackground(Color.BLACK);
         battleLog.setForeground(Color.GREEN);
-        battleLog.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        battleLog.setFont(new Font("Monospaced", Font.PLAIN, 14));
         add(new JScrollPane(battleLog), BorderLayout.CENTER);
 
         //BOTTOM AREA: BUTTONS

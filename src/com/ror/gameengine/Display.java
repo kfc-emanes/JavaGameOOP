@@ -1,9 +1,8 @@
 package com.ror.gameengine;
 
-import com.ror.gamemodel.*;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import javax.swing.*;
 
 public class Display extends JFrame implements ActionListener {
 
@@ -11,8 +10,9 @@ public class Display extends JFrame implements ActionListener {
     private GameFrame gameFrame; // Reference to GameFrame
 
     public Display() {
-        setTitle("Realms of Riftborne - Debug Build v2.0");
-        setSize(700, 500);
+        setTitle("Realms of Riftborne - Debug Build v1.4.0");
+        setSize(900, 700);
+        setFont(new Font("Century Gothic", Font.PLAIN, 16));
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
@@ -20,7 +20,7 @@ public class Display extends JFrame implements ActionListener {
         setLayout(layout);
 
         // Create GameFrame and panels
-        gameFrame = new GameFrame(); // reference so we can call its showBattle etc.
+        gameFrame = new GameFrame(); // reference
     }
 
     @Override
