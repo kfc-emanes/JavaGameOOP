@@ -16,19 +16,19 @@ public class CharacterSelectPanel extends JPanel {
     //private JButton slot4Button;
     //private JButton slot5Button;
 
-    private GameFrame parent; // ✅ reference to GameFrame
+    private GameFrame parent; // reference to GameFrame
 
     public CharacterSelectPanel(GameFrame parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
         setBackground(Color.DARK_GRAY);
 
-        // --- Title ---
+        // Title 
         JLabel title = new JLabel("Select Your Character", SwingConstants.CENTER);
         title.setFont(new Font("Serif", Font.BOLD, 26));
         title.setForeground(Color.WHITE);
 
-        // --- Character Buttons ---
+        // Character Buttons
         JPanel characterPanel = new JPanel(new GridLayout(1, 5, 12, 12));
         characterPanel.setBackground(Color.DARK_GRAY);
 
@@ -44,15 +44,15 @@ public class CharacterSelectPanel extends JPanel {
         characterPanel.add(NyxButton);
         characterPanel.add(TharnButton);
 
-        // --- Back Button ---
+        //Back Button
         backButton = new JButton("Back to Menu >>>");
 
-        // --- Layout ---
+        //Layout
         add(title, BorderLayout.NORTH);
         add(characterPanel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
 
-        // --- Button Logic ---
+        //Button Logic
         andrewButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.Andrew()));
         backButton.addActionListener(e -> parent.showMenu());
         flameWarriorButton.addActionListener(e -> parent.showBattle(new com.ror.gamemodel.Playable.FlameWarrior()));
@@ -66,7 +66,7 @@ public class CharacterSelectPanel extends JPanel {
        // slot5Button.setEnabled(false);
     }
 
-    // --- Getters (Optional, for flexibility) ---
+    // Getter (for flexibility)
     public JButton getAndrewButton() { return andrewButton; }
     public JButton getBackButton() { return backButton; }
     public JButton getFlameWarriorButton() { return flameWarriorButton; }
