@@ -1,9 +1,9 @@
 package com.ror.gameengine;
 
 import com.ror.gamemodel.*;
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import javax.swing.*;
 
 public class BattlePanel extends JPanel {
     private GameFrame parent;
@@ -15,6 +15,7 @@ public class BattlePanel extends JPanel {
     private Entity player;
     private Entity enemy;
     private boolean playerTurn = true;
+    private int healAmount = 80;
 
     private boolean playerShieldActive = false;
     private int delayedDamageToEnemy = 0;
@@ -28,7 +29,7 @@ public class BattlePanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        // --- Top: HP and names ---
+        //TOP AREA: GENERAL INFO
         JPanel top = new JPanel(new GridLayout(2, 2));
         top.setBackground(Color.BLACK);
 
@@ -50,7 +51,7 @@ public class BattlePanel extends JPanel {
 
         add(top, BorderLayout.NORTH);
 
-        // --- Center: battle log ---
+        //CENTER AREA: BATTLE LOG
         battleLog = new JTextArea();
         battleLog.setEditable(false);
         battleLog.setBackground(Color.BLACK);
@@ -58,7 +59,7 @@ public class BattlePanel extends JPanel {
         battleLog.setFont(new Font("Monospaced", Font.PLAIN, 13));
         add(new JScrollPane(battleLog), BorderLayout.CENTER);
 
-        // --- Bottom: skill buttons ---
+        //BOTTOM AREA: BUTTONS
         JPanel bottom = new JPanel(new GridLayout(1, 4, 8, 8));
         bottom.setBackground(Color.DARK_GRAY);
 
@@ -115,7 +116,18 @@ public class BattlePanel extends JPanel {
 
         battleLog.setText("");
         log("⚔️ The Battle Begins. It's " + player.getName() + " VS " + enemy.getName() + "!");
-        log("\nChoose a skill to begin your turn.");
+        //TUTORIAL MESSAGE
+        
+        JOptionPane.showMessageDialog(this,
+                    "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
+                    "[] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
+                    "[] Defeating a miniboss will allow you to proceed to the next realm.\n" +
+                    "[] You restore " + healAmount + " health after every battle.\n" +
+                    "[] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
+                    "Pick a skill to begin your turn!",
+                    "Tutorial", JOptionPane.INFORMATION_MESSAGE);
+        
+                    log("\nChoose a skill to begin your turn.");
     }
 
     private void clearListeners() {
@@ -129,7 +141,11 @@ public class BattlePanel extends JPanel {
         Skill s = player.getSkills()[index];
 
         if (s.isOnCooldown()) {
-            log("⏳ " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!");
+            // log("⏳ Whoops! " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!\n");
+            JOptionPane.showMessageDialog(this,
+                    "⏳ Whoops! " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!\n" +
+                    "Select another skill!",
+                    "On Cooldown!", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -171,7 +187,7 @@ public class BattlePanel extends JPanel {
 
         playerTurn = false;
 
-        Timer timer = new Timer(900, e -> {
+        Timer timer = new Timer(1000, e -> {
             ((Timer) e.getSource()).stop();
             enemyTurn();
         });
@@ -189,13 +205,13 @@ public class BattlePanel extends JPanel {
     }
 
     private void enemyTurn() {
-    // --- Enemy defeated early (before enemy acts) ---
+    //Enemy defeated early (before enemy acts)
     if (!enemy.isAlive()) {
         handleEnemyDefeat(enemy);
         return;
     }
 
-    // --- Enemy’s turn ---
+    //Enemy’s turn
     if (playerShieldActive) {
         log("🛡️ The attack is blocked by your Time Shield!");
         playerShieldActive = false;
@@ -208,7 +224,8 @@ public class BattlePanel extends JPanel {
         updateHPLabels();
     }
 
-    // --- Chrono Slash delayed damage ---
+    //Chrono Slash delayed damage
+    //TODO: BUNDLE THIS ENTIRE FUNCTION INTO A GAME MECHANICS FILE
     if (delayedDamageToEnemy > 0 && enemy.isAlive()) {
         log("💫 Chrono Slash triggers — " + delayedDamageToEnemy + " delayed damage!");
         enemy.takeDamage(delayedDamageToEnemy);
@@ -221,20 +238,20 @@ public class BattlePanel extends JPanel {
         }
     }
 
-    // --- Cooldown reductions ---
+    //CD Reductions
     for (Skill skill : player.getSkills()) {
         skill.reduceCooldown();
         updateSkillButtons();
     }
 
-    // --- End turn check ---
+    //End turn check
     if (!player.isAlive()) {
         log("💀 You were defeated...");
         disableSkillButtons();
         return;
     }
 
-    // --- Player’s next turn ---
+    //Player’s next turn
     playerTurn = true;
     log("Your turn! Choose your next skill.");
     }
@@ -250,7 +267,7 @@ public class BattlePanel extends JPanel {
     Timer nextBattleTimer = new Timer(700, e -> {
         ((Timer) e.getSource()).stop();
 
-        // --- TUTORIAL PHASE ---
+        //TUTORIAL PHASE
         if (mode.equals("Tutorial")) {
             if (defeatedEnemy instanceof Goblin) {
                 JOptionPane.showMessageDialog(this,
@@ -277,7 +294,7 @@ public class BattlePanel extends JPanel {
 
                 mode = "Realm1";
                 JOptionPane.showMessageDialog(this,
-                    "🌩️ REALM I: AETHERIA 🌩️\n\n" +
+                    "🌩️ REALM: AETHERIA 🌩️\n\n" +
                     "You awaken beneath stormy skies — Aetheria.\n" +
                     "Sky Serpents circle above, lightning dancing across their scales.",
                     "Chapter I: The Rift Opens",
@@ -301,7 +318,7 @@ public class BattlePanel extends JPanel {
             if (defeatedEnemy instanceof SkySerpent) {
                 JOptionPane.showMessageDialog(this,
                     "The Sky Serpent bursts into feathers and lightning.\n" +
-                    "From the thunderclouds above descends General Zephra, Storm Mage of the Rift.",
+                    "From the thunderclouds above descends General Zephra, Storm Mage of the Rift. She appears to be angered by the loss of her lesser kin.",
                     "⚡ Boss Battle: General Zephra ⚡",
                     JOptionPane.INFORMATION_MESSAGE);
 
@@ -318,7 +335,7 @@ public class BattlePanel extends JPanel {
 
             if (defeatedEnemy instanceof GeneralZephra) {
                 JOptionPane.showMessageDialog(this,
-                    "Zephra’s thunderbird screeches as lightning fades.\n" +
+                    "The Thunderbird screeches in pain as lightning fades and her body lies still atop its plumes.\n" +
                     "A fiery rift tears open beneath you...",
                     "🔥 Transition to Realm II: Ignara 🔥",
                     JOptionPane.INFORMATION_MESSAGE);
@@ -328,7 +345,7 @@ public class BattlePanel extends JPanel {
                 clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
-                log("🔥 Realm II: Ignara — molten chaos awaits!");
+                log("🔥 REALM: IGNARA 🔥");
                 updateHPLabels();
                 enableSkillButtons();
                 playerTurn = true;
@@ -368,7 +385,7 @@ public class BattlePanel extends JPanel {
                 clearBattleLog();
                 healBetweenBattles();
                 enemyNameLabel.setText(enemy.getName());
-                log("🌑 Realm III: Noxterra — the shadows hunger...");
+                log("🌑 REALM: NOXTERRA 🌑");
                 updateHPLabels();
                 enableSkillButtons();
                 playerTurn = true;
@@ -436,10 +453,10 @@ public class BattlePanel extends JPanel {
 }
 
     private void healBetweenBattles() {
-        int healAmount = 60;
+        //healAmount = 80;
         player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + healAmount));
         updateHPLabels();
-        log("💖 You recover " + healAmount + " HP before the next battle!");
+        log("💖 " + healAmount + " HP was replenished before the next battle.\n");
     }
 
     private void updateHPLabels() {
