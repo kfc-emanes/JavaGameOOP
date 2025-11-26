@@ -1,9 +1,9 @@
 package com.ror.gameengine;
 
 import com.ror.gamemodel.*;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
-import javax.swing.*;
 
 public class BattlePanel extends JPanel {
     private GameFrame parent;
@@ -15,7 +15,6 @@ public class BattlePanel extends JPanel {
     private Entity player;
     private Entity enemy;
     private boolean playerTurn = true;
-    private int healAmount = 80;
 
     private boolean playerShieldActive = false;
     private int delayedDamageToEnemy = 0;
@@ -29,7 +28,7 @@ public class BattlePanel extends JPanel {
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        //TOP AREA: GENERAL INFO
+        // --- Top: HP and names ---
         JPanel top = new JPanel(new GridLayout(2, 2));
         top.setBackground(Color.BLACK);
 
@@ -51,15 +50,15 @@ public class BattlePanel extends JPanel {
 
         add(top, BorderLayout.NORTH);
 
-        //CENTER AREA: BATTLE LOG
+        // --- Center: battle log ---
         battleLog = new JTextArea();
         battleLog.setEditable(false);
         battleLog.setBackground(Color.BLACK);
         battleLog.setForeground(Color.GREEN);
-        battleLog.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        battleLog.setFont(new Font("Monospaced", Font.PLAIN, 13));
         add(new JScrollPane(battleLog), BorderLayout.CENTER);
 
-        //BOTTOM AREA: BUTTONS
+        // --- Bottom: skill buttons ---
         JPanel bottom = new JPanel(new GridLayout(1, 4, 8, 8));
         bottom.setBackground(Color.DARK_GRAY);
 
@@ -68,15 +67,15 @@ public class BattlePanel extends JPanel {
         skillBtn3 = new JButton("Skill 3");
         backBtn = new JButton("Back");
         backBtn.addActionListener(e -> {
-        int confirm = JOptionPane.showConfirmDialog(
-        this,
-        "Are you sure you want to return to the Main Menu?",
-        "Confirm Return",
-        JOptionPane.YES_NO_OPTION
-        );
-        if (confirm == JOptionPane.YES_OPTION) {
-            parent.showMenu();
-        }
+            int confirm = JOptionPane.showConfirmDialog(
+                this,
+                "Are you sure you want to return to the Main Menu?",
+                "Confirm Return",
+                JOptionPane.YES_NO_OPTION
+            );
+            if (confirm == JOptionPane.YES_OPTION) {
+                parent.showMenu();
+            }
         });
 
         bottom.add(skillBtn1);
@@ -116,18 +115,7 @@ public class BattlePanel extends JPanel {
 
         battleLog.setText("");
         log("⚔️ The Battle Begins. It's " + player.getName() + " VS " + enemy.getName() + "!");
-        //TUTORIAL MESSAGE
-        
-        JOptionPane.showMessageDialog(this,
-                    "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
-                    "[] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
-                    "[] Defeating a miniboss will allow you to proceed to the next realm.\n" +
-                    "[] You restore " + healAmount + " health after every battle.\n" +
-                    "[] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
-                    "Pick a skill to begin your turn!",
-                    "Tutorial", JOptionPane.INFORMATION_MESSAGE);
-        
-                    log("\nChoose a skill to begin your turn.");
+        log("\nChoose a skill to begin your turn.");
     }
 
     private void clearListeners() {
@@ -141,11 +129,7 @@ public class BattlePanel extends JPanel {
         Skill s = player.getSkills()[index];
 
         if (s.isOnCooldown()) {
-            // log("⏳ Whoops! " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!\n");
-            JOptionPane.showMessageDialog(this,
-                    "⏳ Whoops! " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!\n" +
-                    "Select another skill!",
-                    "On Cooldown!", JOptionPane.INFORMATION_MESSAGE);
+            log("⏳ " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!");
             return;
         }
 
@@ -187,7 +171,7 @@ public class BattlePanel extends JPanel {
 
         playerTurn = false;
 
-        Timer timer = new Timer(1000, e -> {
+        Timer timer = new Timer(900, e -> {
             ((Timer) e.getSource()).stop();
             enemyTurn();
         });
@@ -205,258 +189,265 @@ public class BattlePanel extends JPanel {
     }
 
     private void enemyTurn() {
-    //Enemy defeated early (before enemy acts)
-    if (!enemy.isAlive()) {
-        handleEnemyDefeat(enemy);
-        return;
-    }
-
-    //Enemy’s turn
-    if (playerShieldActive) {
-        log("🛡️ The attack is blocked by your Time Shield!");
-        playerShieldActive = false;
-        lastDamageTakenByPlayer = 0;
-    } else {
-        int damage = Math.max(0, enemy.getAtk() - player.getDef());
-        player.setCurrentHealth(player.getCurrentHealth() - damage);
-        lastDamageTakenByPlayer = damage;
-        log("👹 " + enemy.getName() + " attacks! You take " + damage + " damage.");
-        updateHPLabels();
-    }
-
-    //Chrono Slash delayed damage
-    //TODO: BUNDLE THIS ENTIRE FUNCTION INTO A GAME MECHANICS FILE
-    if (delayedDamageToEnemy > 0 && enemy.isAlive()) {
-        log("💫 Chrono Slash triggers — " + delayedDamageToEnemy + " delayed damage!");
-        enemy.takeDamage(delayedDamageToEnemy);
-        delayedDamageToEnemy = 0;
-        updateHPLabels();
-
+        // --- Enemy defeated early (before enemy acts) ---
         if (!enemy.isAlive()) {
             handleEnemyDefeat(enemy);
             return;
         }
+
+        // --- Enemy’s turn ---
+        if (playerShieldActive) {
+            log("🛡️ The attack is blocked by your Time Shield!");
+            playerShieldActive = false;
+            lastDamageTakenByPlayer = 0;
+        } else {
+            int damage = Math.max(0, enemy.getAtk() - player.getDef());
+            player.setCurrentHealth(player.getCurrentHealth() - damage);
+            lastDamageTakenByPlayer = damage;
+            log("👹 " + enemy.getName() + " attacks! You take " + damage + " damage.");
+            updateHPLabels();
+        }
+
+        // --- Chrono Slash delayed damage ---
+        if (delayedDamageToEnemy > 0 && enemy.isAlive()) {
+            log("💫 Chrono Slash triggers — " + delayedDamageToEnemy + " delayed damage!");
+            enemy.takeDamage(delayedDamageToEnemy);
+            delayedDamageToEnemy = 0;
+            updateHPLabels();
+
+            if (!enemy.isAlive()) {
+                handleEnemyDefeat(enemy);
+                return;
+            }
+        }
+
+        // --- Cooldown reductions ---
+        for (Skill skill : player.getSkills()) {
+            skill.reduceCooldown();
+            updateSkillButtons();
+        }
+
+        // --- End turn check ---
+        if (!player.isAlive()) {
+            log("💀 You were defeated...");
+            disableSkillButtons();
+            return;
+        }
+
+        // --- Player’s next turn ---
+        playerTurn = true;
+        log("Your turn! Choose your next skill.");
     }
 
-    //CD Reductions
-    for (Skill skill : player.getSkills()) {
-        skill.reduceCooldown();
-        updateSkillButtons();
-    }
-
-    //End turn check
-    if (!player.isAlive()) {
-        log("💀 You were defeated...");
-        disableSkillButtons();
-        return;
-    }
-
-    //Player’s next turn
-    playerTurn = true;
-    log("Your turn! Choose your next skill.");
-    }
     private void clearBattleLog() {
-    battleLog.setText("");
+        battleLog.setText("");
+    }
+
+
+    private void handleEnemyDefeat(Entity defeatedEnemy) {
+        log("🏆 You defeated the " + defeatedEnemy.getName() + "!");
+        disableSkillButtons();
+
+        // ---- 20% HP Reward ----
+        int hpGain = (int) (player.getMaxHealth() * 0.20);
+        player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + hpGain));
+        log("❤️ You restored +" + hpGain + " HP!");
+        updateHPLabels();
+        // ---- End 20% HP Reward ----
+
+        Timer nextBattleTimer = new Timer(700, e -> {
+            ((Timer) e.getSource()).stop();
+
+            // --- TUTORIAL PHASE ---
+            if (mode.equals("Tutorial")) {
+                if (defeatedEnemy instanceof Goblin) {
+                    JOptionPane.showMessageDialog(this,
+                        "The Goblin collapses, dropping a strange sigil...\n" +
+                        "From the shadows, a hooded Cultist steps forward.",
+                        "Tutorial: Part II", JOptionPane.INFORMATION_MESSAGE);
+
+                    enemy = new Cultist();
+                    clearBattleLog();
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("🔥 A new foe approaches: " + enemy.getName() + "!");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    return;
+                }
+
+                if (defeatedEnemy instanceof Cultist) {
+                    JOptionPane.showMessageDialog(this,
+                        "The Cultist’s whisper fades: 'He... watches from the Rift...'\n\n" +
+                        "A surge of energy pulls you through — the Realms shift.",
+                        "End of Tutorial", JOptionPane.INFORMATION_MESSAGE);
+
+                    mode = "Realm1";
+                    JOptionPane.showMessageDialog(this,
+                        "🌩️ REALM I: AETHERIA 🌩️\n\n" +
+                        "You awaken beneath stormy skies — Aetheria.\n" +
+                        "Sky Serpents circle above, lightning dancing across their scales.",
+                        "Chapter I: The Rift Opens",
+                        JOptionPane.INFORMATION_MESSAGE);
+
+                    enemy = new SkySerpent();   
+                    clearBattleLog();
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("⚔️ A new foe approaches: " + enemy.getName() + "!");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    enableBackButtonForRealDeal();
+                    return;
+                }
             }
 
+            // --- REALM I: AETHERIA ---
+            if (mode.equals("Realm1")) {
+                if (defeatedEnemy instanceof SkySerpent) {
+                    JOptionPane.showMessageDialog(this,
+                        "The Sky Serpent bursts into feathers and lightning.\n" +
+                        "From the thunderclouds above descends General Zephra, Storm Mage of the Rift.",
+                        "⚡ Boss Battle: General Zephra ⚡",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-   private void handleEnemyDefeat(Entity defeatedEnemy) {
-    log("🏆 You defeated the " + defeatedEnemy.getName() + "!");
-    disableSkillButtons();
+                    enemy = new GeneralZephra();
+                    clearBattleLog();                
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("⚡ A new foe approaches: " + enemy.getName() + "!");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    return;
+                }
 
-    Timer nextBattleTimer = new Timer(700, e -> {
-        ((Timer) e.getSource()).stop();
+                if (defeatedEnemy instanceof GeneralZephra) {
+                    JOptionPane.showMessageDialog(this,
+                        "Zephra’s thunderbird screeches as lightning fades.\n" +
+                        "A fiery rift tears open beneath you...",
+                        "🔥 Transition to Realm II: Ignara 🔥",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-        //TUTORIAL PHASE
-        if (mode.equals("Tutorial")) {
-            if (defeatedEnemy instanceof Goblin) {
-                JOptionPane.showMessageDialog(this,
-                    "The Goblin collapses, dropping a strange sigil...\n" +
-                    "From the shadows, a hooded Cultist steps forward.",
-                    "Tutorial: Part II", JOptionPane.INFORMATION_MESSAGE);
-
-                enemy = new Cultist();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("🔥 A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
+                    mode = "Realm2";
+                    enemy = new MoltenImp();
+                    clearBattleLog();
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("🔥 Realm II: Ignara — molten chaos awaits!");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    return;
+                }
             }
 
-            if (defeatedEnemy instanceof Cultist) {
-                JOptionPane.showMessageDialog(this,
-                    "The Cultist’s whisper fades: 'He... watches from the Rift...'\n\n" +
-                    "A surge of energy pulls you through — the Realms shift.",
-                    "End of Tutorial", JOptionPane.INFORMATION_MESSAGE);
+            // --- REALM II: IGNARA ---
+            if (mode.equals("Realm2")) {
+                if (defeatedEnemy instanceof MoltenImp) {
+                    JOptionPane.showMessageDialog(this,
+                        "The last Molten Imp bursts into flame...\n" +
+                        "From the magma rises General Vulkrag, the Infernal Commander!",
+                        "🔥 Boss Battle: General Vulkrag 🔥",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-                mode = "Realm1";
-                JOptionPane.showMessageDialog(this,
-                    "🌩️ REALM: AETHERIA 🌩️\n\n" +
-                    "You awaken beneath stormy skies — Aetheria.\n" +
-                    "Sky Serpents circle above, lightning dancing across their scales.",
-                    "Chapter I: The Rift Opens",
-                    JOptionPane.INFORMATION_MESSAGE);
+                    enemy = new GeneralVulkrag();
+                    clearBattleLog();
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("🔥 A new foe approaches: " + enemy.getName() + "!");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    return;
+                }
 
-                enemy = new SkySerpent();   
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("⚔️ A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                enableBackButtonForRealDeal();
-                return;
-            }
-        }
+                if (defeatedEnemy instanceof GeneralVulkrag) {
+                    JOptionPane.showMessageDialog(this,
+                        "Vulkrag’s molten armor cracks apart.\n" +
+                        "Darkness seeps in from the edges of reality...",
+                        "🌑 Transition to Realm III: Noxterra 🌑",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-        // --- REALM I: AETHERIA ---
-        if (mode.equals("Realm1")) {
-            if (defeatedEnemy instanceof SkySerpent) {
-                JOptionPane.showMessageDialog(this,
-                    "The Sky Serpent bursts into feathers and lightning.\n" +
-                    "From the thunderclouds above descends General Zephra, Storm Mage of the Rift. She appears to be angered by the loss of her lesser kin.",
-                    "⚡ Boss Battle: General Zephra ⚡",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-                enemy = new GeneralZephra();
-                clearBattleLog();                
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("⚡ A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
+                    mode = "Realm3";
+                    enemy = new ShadowCreeper();
+                    clearBattleLog();
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("🌑 Realm III: Noxterra — the shadows hunger...");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    return;
+                }
             }
 
-            if (defeatedEnemy instanceof GeneralZephra) {
-                JOptionPane.showMessageDialog(this,
-                    "The Thunderbird screeches in pain as lightning fades and her body lies still atop its plumes.\n" +
-                    "A fiery rift tears open beneath you...",
-                    "🔥 Transition to Realm II: Ignara 🔥",
-                    JOptionPane.INFORMATION_MESSAGE);
+            // --- REALM III: NOXTERRA ---
+            if (mode.equals("Realm3")) {
+                if (defeatedEnemy instanceof ShadowCreeper) {
+                    JOptionPane.showMessageDialog(this,
+                        "The Shadow Creeper dissolves into mist...\n" +
+                        "A dark laughter echoes — the Rift Lord himself descends.",
+                        "💀 Final Boss: Lord Vorthnar 💀",
+                        JOptionPane.INFORMATION_MESSAGE);
 
-                mode = "Realm2";
-                enemy = new MoltenImp();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("🔥 REALM: IGNARA 🔥");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
+                    enemy = new Vorthnar();
+                    clearBattleLog();
+                    healBetweenBattles();
+                    enemyNameLabel.setText(enemy.getName());
+                    log("💀 The final boss approaches: " + enemy.getName() + "!");
+                    updateHPLabels();
+                    enableSkillButtons();
+                    playerTurn = true;
+                    return;
+                }
+
+                if (defeatedEnemy instanceof Vorthnar) {
+                    JOptionPane.showMessageDialog(this,
+                        "Vorthnar collapses — time itself shatters, then reforms.\n\n" +
+                        "🏆 CHAPTER III COMPLETE 🏆\nYou have conquered the Realms!",
+                        "🎉 Victory!", JOptionPane.INFORMATION_MESSAGE);
+
+                    log("🎉 You defeated Lord Vorthnar! Chapter III complete!");
+                    disableSkillButtons();
+                    return;
+                }
             }
-        }
-
-        // --- REALM II: IGNARA ---
-        if (mode.equals("Realm2")) {
-            if (defeatedEnemy instanceof MoltenImp) {
-                JOptionPane.showMessageDialog(this,
-                    "The last Molten Imp bursts into flame...\n" +
-                    "From the magma rises General Vulkrag, the Infernal Commander!",
-                    "🔥 Boss Battle: General Vulkrag 🔥",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-                enemy = new GeneralVulkrag();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("🔥 A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-
-            if (defeatedEnemy instanceof GeneralVulkrag) {
-                JOptionPane.showMessageDialog(this,
-                    "Vulkrag’s molten armor cracks apart.\n" +
-                    "Darkness seeps in from the edges of reality...",
-                    "🌑 Transition to Realm III: Noxterra 🌑",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-                mode = "Realm3";
-                enemy = new ShadowCreeper();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("🌑 REALM: NOXTERRA 🌑");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-        }
-
-        // --- REALM III: NOXTERRA ---
-        if (mode.equals("Realm3")) {
-            if (defeatedEnemy instanceof ShadowCreeper) {
-                JOptionPane.showMessageDialog(this,
-                    "The Shadow Creeper dissolves into mist...\n" +
-                    "A dark laughter echoes — the Rift Lord himself descends.",
-                    "💀 Final Boss: Lord Vorthnar 💀",
-                    JOptionPane.INFORMATION_MESSAGE);
-
-                enemy = new Vorthnar();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("💀 The final boss approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-
-            if (defeatedEnemy instanceof Vorthnar) {
-                JOptionPane.showMessageDialog(this,
-                    "Vorthnar collapses — time itself shatters, then reforms.\n\n" +
-                    "🏆 CHAPTER III COMPLETE 🏆\nYou have conquered the Realms!",
-                    "🎉 Victory!", JOptionPane.INFORMATION_MESSAGE);
-
-                log("🎉 You defeated Lord Vorthnar! Chapter III complete!");
-                disableSkillButtons();
-                return;
-            }
-        }
-    });
-    nextBattleTimer.setRepeats(false);
-    nextBattleTimer.start();
-}
+        });
+        nextBattleTimer.setRepeats(false);
+        nextBattleTimer.start();
+    }
 
 
     private void enableBackButtonForRealDeal() {
-    backBtn.setEnabled(true);
-    for (ActionListener al : backBtn.getActionListeners()) backBtn.removeActionListener(al);
+        backBtn.setEnabled(true);
+        for (ActionListener al : backBtn.getActionListeners()) backBtn.removeActionListener(al);
 
-    backBtn.addActionListener(e -> {
-        int confirm = JOptionPane.showConfirmDialog(this,
-            "Return to Main Menu? Your current progress will be lost.",
-            "Confirm Exit",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE);
+        backBtn.addActionListener(e -> {
+            int confirm = JOptionPane.showConfirmDialog(this,
+                "Return to Main Menu? Your current progress will be lost.",
+                "Confirm Exit",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
 
-        if (confirm == JOptionPane.YES_OPTION) {
-            // 🔁 Change this depending on your main game structure
-            // Example if using a card layout in GameFrame:
-            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            if (topFrame instanceof GameFrame) {
-                ((GameFrame) topFrame).showMenu();
+            if (confirm == JOptionPane.YES_OPTION) {
+                // 🔁 Change this depending on your main game structure
+                // Example if using a card layout in GameFrame:
+                JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                if (topFrame instanceof GameFrame) {
+                    ((GameFrame) topFrame).showMenu();
+                }
             }
-        }
-    });
-}
+        });
+    }
 
     private void healBetweenBattles() {
-        //healAmount = 80;
+        int healAmount = 60;
         player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + healAmount));
         updateHPLabels();
-        log("💖 " + healAmount + " HP was replenished before the next battle.\n");
+        log("💖 You recover " + healAmount + " HP before the next battle!");
     }
 
     private void updateHPLabels() {
