@@ -4,11 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 
 public class MenuPanel extends JPanel {
-    private GameFrame parent;  // Reference to the main frame
+    private GameFrame parent;  // Reference to the main frame so it says unused meh
     private JButton playButton;
 
     public MenuPanel(GameFrame parent) {
-        this.parent = parent; // Store the reference
+        this.parent = parent; // Store the reference diri   
 
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);

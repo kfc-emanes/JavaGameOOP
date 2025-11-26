@@ -4,38 +4,14 @@ public class Skill {
     private String name;
     private int power; 
     private String type; // e.g. "Attack" or "Heal"
-    private int manaCost;       // added mana cost attribute
-    private double accuracy;
-    private double critChance;
-    private int level;
-    private int maxLevel;
 
-    public Skill(int manaCost, String name, int power, String type, double accuracy, double critChance) {
-        this.name = name;
-        this.power = power;
-        this.type = type;
-        this.manaCost = manaCost;
-        this.accuracy = accuracy;
-        this.critChance = critChance;
-    }
-
-    public int getManaCost() { 
-        
-        return manaCost;
-    }
-
+    public int cooldown;
+    public int currentCooldown;
     public String getName() { return name; }
     public int getPower() { return power; }
     public String getType() { return type; }
     public int getCooldown() { return cooldown; }
     public int getCurrentCooldown() { return currentCooldown; }
-
-    public double getAccuracy() {
-        return accuracy;
-    }
-    public double getCritChance() {
-        return critChance;
-    }
 
     // For logging/testing
     public void use(Entity user, Entity target) {
@@ -56,8 +32,6 @@ public class Skill {
             System.out.println("Unknown skill type: " + type);
         }
     }
-    private int cooldown;
-    private int currentCooldown;
 
     public Skill(String name, int power, String type, int cooldown) {
         this.name = name;
@@ -76,17 +50,14 @@ public class Skill {
     }
 
     public void triggerCooldown() {
-        currentCooldown = cooldown;
+        this.currentCooldown = this.cooldown;
     }
 
-    public void levelUp() { // updated - level up method
-        if (level < maxLevel) {
-            level++;
-            power += 5;
-            System.out.println(name + " leveled up to " + level + "! Power increased to " + power);
-        } else {
-            System.out.println(name + " is already at max level.");
-        }
+    public void resetCooldown() {
+        currentCooldown = 0;
     }
 
+    public void setCurrentCooldown(int val) {
+        this.currentCooldown = Math.max(0, val);
+    }
 }
