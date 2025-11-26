@@ -120,10 +120,11 @@ public class BattlePanel extends JPanel {
         
         JOptionPane.showMessageDialog(this,
                     "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
-                    "[] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
-                    "[] Defeating a miniboss will allow you to proceed to the next realm.\n" +
-                    "[] You restore " + healAmount + " health after every battle.\n" +
-                    "[] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
+                    "[!] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
+                    "[!] Defeating a miniboss will allow you to proceed to the next realm.\n" +
+                    "[!] You restore " + healAmount + " health after every battle.\n" +
+                    "[!] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
+                    "[!] The Back button on the bottom right is disabled until AFTER the Tutorial!\n" +
                     "Pick a skill to begin your turn!",
                     "Tutorial", JOptionPane.INFORMATION_MESSAGE);
         
