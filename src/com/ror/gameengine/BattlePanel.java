@@ -12,6 +12,7 @@ public class BattlePanel extends JPanel {
     private JButton skillBtn1, skillBtn2, skillBtn3, backBtn;
     private JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel;
     private JLabel playerLevelLabel;
+    private int healAmount;
 
     private Entity player;
     private Entity enemy;
@@ -145,6 +146,24 @@ public class BattlePanel extends JPanel {
 
         battleLog.setText("");
         log("⚔️ The Battle Begins. It's " + player.getName() + " VS " + enemy.getName() + "!");
+
+         JOptionPane.showMessageDialog(this,
+                    "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
+                    "[] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
+                    "[] Defeating a miniboss will allow you to proceed to the next realm.\n" +
+                    "[] You restore " + healAmount + " health after every battle.\n" +
+                    "[] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
+                    "[!] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
+                    "[!] Defeating a miniboss will allow you to proceed to the next realm.\n" +
+                    "[!] You restore " + healAmount + " health after every battle.\n" +
+                    "[!] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
+                    "[!] The Back button on the bottom right is disabled until AFTER the Tutorial!\n" +
+                    "Pick a skill to begin your turn!",
+                    "Tutorial", JOptionPane.INFORMATION_MESSAGE);
+        
+                    log("\nChoose a skill to begin your turn.");
+    
+
         log("\nChoose a skill to begin your turn.");
 
         updateSkillButtons();
@@ -192,7 +211,7 @@ public class BattlePanel extends JPanel {
                 int lost = player.getMaxHealth() - player.getCurrentHealth();
                 int heal = (int) Math.ceil(lost * 0.5); // 50% of lost HP
                 if (heal <= 0) {
-                    log("♻️ Reverse Flow restores 0 HP (you are already at full health).");
+                    log("♻️ Reverse F   low restores 0 HP (you are already at full health).");
                 } else {
                     player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + heal));
                     log("♻️ Reverse Flow restores " + heal + " HP (50% of lost HP)!");
@@ -568,7 +587,7 @@ public class BattlePanel extends JPanel {
 
 
     private void log(String msg) {
-        battleLog.append(msg + "\n");
+        battleLog.append(msg + "\n\n");
     }
 
     private void disableSkillButtons() {
