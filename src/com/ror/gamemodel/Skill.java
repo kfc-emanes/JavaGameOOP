@@ -57,17 +57,7 @@ public class Skill {
     public int getCurrentCooldown() {
         return currentCooldown;
     }
-
-    public void levelUp() { // updated - level up method
-        if (level < maxLevel) {
-            level++;
-            power += 5;
-            System.out.println(name + " leveled up to " + level + "! Power increased to " + power);
-        } else {
-            System.out.println(name + " is already at max level.");
-        }
-    }
-
+    
     public void resetCooldown() {
         currentCooldown = 0;
     }
