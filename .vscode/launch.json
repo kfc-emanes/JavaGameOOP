@@ -10,6 +10,7 @@
         },
         {
             "type": "java",
+<<<<<<< Updated upstream
             "name": "RealmsOfRiftborne",
             "request": "launch",
             "mainClass": "com.ror.gameengine.RealmsOfRiftborne",
@@ -31,6 +32,8 @@
         },
         {
             "type": "java",
+=======
+>>>>>>> Stashed changes
             "name": "Launch RealmsOfRiftborne",
             "request": "launch",
             "mainClass": "RealmsOfRiftborne",
