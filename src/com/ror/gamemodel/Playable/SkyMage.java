@@ -9,8 +9,8 @@ public class SkyMage extends Entity {
         super("Flashley the Windwhisperer", 120, 120, 25, 14);
 
         Skill tempestGale = new Skill("Tempest Gale", 22, "Attack", 2);
-        Skill featherBarrier = new Skill("Feather Barrier", 0, "Defend", 3);
-        Skill windwalk = new Skill("Windwalk", 0, "Evade", 3);
+        Skill featherBarrier = new Skill("Feather Barrier", 0, "Heal", 3);
+        Skill windwalk = new Skill("Windwalk", 0, "Dodge", 3);
 
         setSkills(new Skill[]{tempestGale, featherBarrier, windwalk});
     }

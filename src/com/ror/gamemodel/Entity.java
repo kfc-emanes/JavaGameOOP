@@ -7,6 +7,8 @@ public class Entity {
     protected int atk;
     protected int def;
     protected Skill[] skills;
+    protected int currentCooldown;
+    private int level = 0;
 
     public Entity(String name, int maxHealth, int currHealth, int atk, int def) {
         this.name = name;
@@ -39,6 +41,10 @@ public class Entity {
 
     public void setCurrentHealth(int health) {
         this.currHealth = Math.max(0, Math.min(health, maxHealth));
+    }
+
+    public void setCurrentCooldown(int cooldown) {
+        this.currentCooldown = cooldown;
     }
 
     public Skill[] getSkills() {
@@ -92,4 +98,26 @@ public class Entity {
         this.skills = skills;
     }
 
+    public void levelUp(double hpPercent, double atkPercent) {
+        int hpIncrease = (int) Math.round(maxHealth * hpPercent);
+        int atkIncrease = (int) Math.round(atk * atkPercent);
+
+        maxHealth += hpIncrease;
+        currHealth += hpIncrease;
+        atk += atkIncrease;
+
+        // Reset all skill cooldowns
+        if (skills != null) {
+            for (Skill skill : skills) {
+                if (skill != null) skill.resetCooldown(); // reset to 0
+            }
+        }
+        level++;
+        System.out.println(name + " leveled up! Max HP +" + hpIncrease + ", ATK +" + atkIncrease);
+        System.out.println("All skill cooldowns have been reset!");
+    }
+
+    public int getLevel() {
+        return level;
+    }
 }

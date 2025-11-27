@@ -65,7 +65,7 @@ public class WorldManager {
             finalBossUnlocked = true;
             currentWorld = "Final Battle";
             System.out.println("\n⚡ The Final Battle Begins! ⚡");
-            return new Vorthnar(); // corrected class name
+            return new Vorthnar();
         }
 
         // Game finished

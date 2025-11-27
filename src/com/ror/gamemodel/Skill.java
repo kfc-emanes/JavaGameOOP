@@ -3,57 +3,14 @@ package com.ror.gamemodel;
 public class Skill {
     private String name;
     private int power; 
-    private String type; // e.g. "Attack" or "Heal"
-    private int manaCost;       // added mana cost attribute
-    private double accuracy;
-    private double critChance;
+    private String type; 
     private int level;
     private int maxLevel;
-
-    public Skill(int manaCost, String name, int power, String type, double accuracy, double critChance) {
-        this.name = name;
-        this.power = power;
-        this.type = type;
-        this.manaCost = manaCost;
-        this.accuracy = accuracy;
-        this.critChance = critChance;
-    }
-
-    public int getManaCost() { 
-        
-        return manaCost;
-    }
-    public String getName() {
-        return name;
-    }
 
     public String getName() { return name; }
     public int getPower() { return power; }
     public String getType() { return type; }
     public int getCooldown() { return cooldown; }
-    public int getCurrentCooldown() { return currentCooldown; }
-
-    public boolean isOnCooldown() {
-        return currentCooldown > 0;
-    }
-
-    public void triggerCooldown() {
-        if (cooldown > 0) {
-            currentCooldown = cooldown;
-        }
-    }
-    public double getAccuracy() {
-        return accuracy;
-    }
-    public double getCritChance() {
-        return critChance;
-    }
-
-    public void reduceCooldown() {
-        if (currentCooldown > 0) {
-            currentCooldown--;
-        }
-    }
 
     // For logging/testing
     public void use(Entity user, Entity target) {
@@ -111,4 +68,11 @@ public class Skill {
         }
     }
 
+    public void resetCooldown() {
+        currentCooldown = 0;
+    }
+
+    public void setCurrentCooldown(int val) {
+        this.currentCooldown = Math.max(0, val);
+    }
 }
