@@ -1,6 +1,5 @@
-//EXAMPLE -- CURRENTLY EXPERIMENTAL 
-
-package com.ror.gamemodel;
+package com.ror.gamemodel.Enemy;
+import com.ror.gamemodel.Entity;
 
 public class Goblin extends Entity {
     public Goblin() {

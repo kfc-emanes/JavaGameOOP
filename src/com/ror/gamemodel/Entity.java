@@ -16,7 +16,7 @@ public class Entity {
         this.currHealth = currHealth;
         this.atk = atk;
         this.def = def;
-        this.skills = new Skill[3]; // example: 3 skill slots
+        this.skills = new Skill[3];
     }
 
     public String getName() {

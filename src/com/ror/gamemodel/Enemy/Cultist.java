@@ -1,4 +1,5 @@
-package com.ror.gamemodel;
+package com.ror.gamemodel.Enemy;
+import com.ror.gamemodel.Entity;
 
 public class Cultist extends Entity {
     public Cultist() {
