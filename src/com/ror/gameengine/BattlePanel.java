@@ -584,8 +584,6 @@ public class BattlePanel extends JPanel {
         }
     }
 
-
-
     private void log(String msg) {
         battleLog.append(msg + "\n\n");
     }

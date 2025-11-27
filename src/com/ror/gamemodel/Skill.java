@@ -5,14 +5,20 @@ public class Skill {
     private int power; 
     private String type; 
     private int level;
-    private int maxLevel;
+    
+    public Skill(String name, int power, String type, int cooldown) {
+        this.name = name;
+        this.power = power;
+        this.type = type;
+        this.cooldown = cooldown;
+        this.currentCooldown = 0;
+    }
 
     public String getName() { return name; }
     public int getPower() { return power; }
     public String getType() { return type; }
     public int getCooldown() { return cooldown; }
 
-    // For logging/testing
     public void use(Entity user, Entity target) {
         System.out.println(user.getName() + " uses " + name + " on " + target.getName() + "!");
 
@@ -34,13 +40,6 @@ public class Skill {
     private int cooldown;
     private int currentCooldown;
 
-    public Skill(String name, int power, String type, int cooldown) {
-        this.name = name;
-        this.power = power;
-        this.type = type;
-        this.cooldown = cooldown;
-        this.currentCooldown = 0;
-    }
 
     public boolean isOnCooldown() {
         return currentCooldown > 0;
@@ -64,5 +63,9 @@ public class Skill {
 
     public void setCurrentCooldown(int val) {
         this.currentCooldown = Math.max(0, val);
+    }
+
+    public int getLevel() {
+        return level;
     }
 }

@@ -14,7 +14,7 @@ public class MenuPanel extends JPanel {
         setBackground(Color.BLACK);
 
         JLabel title = new JLabel("Realms of Riftborne", SwingConstants.CENTER);
-        title.setFont(new Font("Serif", Font.BOLD, 32));
+        title.setFont(new Font("Serif", Font.BOLD, 64));
         title.setForeground(Color.WHITE);
 
         playButton = new JButton("Start Game");
