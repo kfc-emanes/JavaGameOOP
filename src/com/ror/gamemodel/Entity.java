@@ -1,14 +1,14 @@
 package com.ror.gamemodel;
 
 public class Entity {
-    protected String name;
-    protected int maxHealth;
-    protected int currHealth;
-    protected int atk;
-    protected int def;
-    protected Skill[] skills;
-    protected int currentCooldown;
-    private int level = 0;
+    public String name;
+    public int maxHealth;
+    public int currHealth;
+    public int atk;
+    public int def;
+    public Skill[] skills;
+    public int currentCooldown;
+    public int level = 0;
 
     public Entity(String name, int maxHealth, int currHealth, int atk, int def) {
         this.name = name;

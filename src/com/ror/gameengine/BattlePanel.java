@@ -3,30 +3,31 @@ package com.ror.gameengine;
 import com.ror.gamemodel.*;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
+//import java.awt.event.ActionListener;
 
 public class BattlePanel extends JPanel {
-    private GameFrame parent;
-    private JButton backButton;
-    private JTextArea battleLog;
-    private JButton skillBtn1, skillBtn2, skillBtn3, backBtn;
-    private JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel;
-    private JLabel playerLevelLabel;
-    private int healAmount;
+    public GameFrame parent;
+    public JButton backButton;
+    public JTextArea battleLog;
+    public JButton skillBtn1, skillBtn2, skillBtn3, backBtn;
+    public JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel;
+    public JLabel playerLevelLabel;
+    public int healAmount;
 
-    private Entity player;
-    private Entity enemy;
-    private boolean playerTurn = true;
+    public Entity player;
+    public Entity enemy;
+    public boolean playerTurn = true;
 
     boolean playerShieldActive = false;
     boolean playerDodgeActive = false;
-    private boolean enemyBlinded = false;
-    private int delayedDamageToEnemy = 0;
-    private int burnDamageToEnemy = 0;         
-    private int burnTurnsRemaining = 0;        
-    private int lastDamageTakenByPlayer = 0;
-    private String mode = "Tutorial";
-    private WorldManager worldManager = new WorldManager();
+    public boolean enemyBlinded = false;
+    public int delayedDamageToEnemy = 0;
+    public int burnDamageToEnemy = 0;         
+    public int burnTurnsRemaining = 0;        
+    public int lastDamageTakenByPlayer = 0;
+    public String mode = "Tutorial";
+    public WorldManager worldManager = new WorldManager();
 
 
     public BattlePanel(GameFrame parent) {
@@ -76,7 +77,7 @@ public class BattlePanel extends JPanel {
         battleLog.setEditable(false);
         battleLog.setBackground(Color.BLACK);
         battleLog.setForeground(Color.WHITE);
-        battleLog.setFont(new Font("Monospaced", Font.PLAIN, 16)); // bigger text
+        battleLog.setFont(new Font("Century Gothic", Font.PLAIN, 16)); // bigger text
         add(new JScrollPane(battleLog), BorderLayout.CENTER);
 
         // Bottom: skill buttons
@@ -149,10 +150,6 @@ public class BattlePanel extends JPanel {
 
          JOptionPane.showMessageDialog(this,
                     "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
-                    "[] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
-                    "[] Defeating a miniboss will allow you to proceed to the next realm.\n" +
-                    "[] You restore " + healAmount + " health after every battle.\n" +
-                    "[] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
                     "[!] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
                     "[!] Defeating a miniboss will allow you to proceed to the next realm.\n" +
                     "[!] You restore " + healAmount + " health after every battle.\n" +
@@ -187,6 +184,7 @@ public class BattlePanel extends JPanel {
         log(player.getName() + " uses " + s.getName() + "!");
 
         String type = s.getType();
+        
         switch (type.toLowerCase()) {
             case "chrono":
                 // Andrew's Timeblade: immediate damage + burn over time (no delayed hit)
