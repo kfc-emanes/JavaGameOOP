@@ -21,8 +21,9 @@ public class HoverButton extends JButton {
         setForeground(Color.WHITE);
         setBorder(BorderFactory.createLineBorder(Color.WHITE, 2));
 
+        //turns button colors inverted on hover
         addMouseListener(new MouseAdapter() {
-            @Override
+            @Override 
             public void mouseEntered(MouseEvent e) {
                 setBackground(Color.WHITE);
                 setForeground(Color.BLACK);
