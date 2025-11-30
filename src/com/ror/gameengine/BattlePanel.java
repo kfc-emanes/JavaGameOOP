@@ -4,6 +4,8 @@ import com.ror.gamemodel.*;
 import com.ror.gameutil.HoverButton;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -12,6 +14,8 @@ public class BattlePanel extends JPanel {
     public JTextArea battleLog;
     public HoverButton skillBtn1, skillBtn2, skillBtn3, backBtn;
     public JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel, playerLevelLabel;
+    public JProgressBar playerHPBar, enemyHPBar;
+    
 
     private Entity player;
     private Entity enemy;
@@ -27,78 +31,149 @@ public class BattlePanel extends JPanel {
         setBackground(Color.BLACK);
 
         setupBattleLog();
-        setupBottomButtons();
     }
 
 
     private void setupTopPanel() {
-        JPanel top = new JPanel(new GridLayout(1, 2));
+        // Make sure enemy exists
+        if (enemy == null) return;
+
+        // Top container panel with centered flow layout
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.CENTER));
         top.setBackground(Color.BLACK);
+        top.setOpaque(true);
 
-        Font nameFont = new Font("SansSerif", Font.BOLD, 16);
-        Font infoFont = new Font("Tahoma", Font.BOLD, 14);
-        Color white = Color.WHITE;
-
-        // --- Player panel (left) ---
-        JPanel playerPanel = new JPanel(new GridLayout(3, 1));
-        playerPanel.setBackground(Color.BLACK);
-
-        playerNameLabel = new JLabel(player.getName(), SwingConstants.CENTER);
-        playerHPLabel = new JLabel("HP: " + player.getCurrentHealth() + "/" + player.getMaxHealth(), SwingConstants.CENTER);
-        playerLevelLabel = new JLabel("Level: " + player.getLevel(), SwingConstants.CENTER);
-
-        playerNameLabel.setFont(nameFont); playerNameLabel.setForeground(Color.white);
-        playerHPLabel.setFont(infoFont); playerHPLabel.setForeground(Color.white);
-        playerLevelLabel.setFont(infoFont); playerLevelLabel.setForeground(Color.white);
-
-        playerPanel.add(playerNameLabel);
-        playerPanel.add(playerHPLabel);
-        playerPanel.add(playerLevelLabel);
-
-        // --- Enemy panel (right) ---
-        JPanel enemyPanel = new JPanel(new GridLayout(2, 1));
-        enemyPanel.setBackground(Color.BLACK);
-
+        // Enemy name label
         enemyNameLabel = new JLabel(enemy.getName(), SwingConstants.CENTER);
+        enemyNameLabel.setForeground(Color.WHITE);
+        enemyNameLabel.setFont(new Font("Century Gothic", Font.BOLD, 14));
+        enemyNameLabel.setPreferredSize(new Dimension(150, 30));
+
+        // Enemy health progress bar
+        enemyHPBar = new JProgressBar(0, Math.max(1, enemy.getMaxHealth()));
+        enemyHPBar.setValue(enemy.getCurrentHealth());
+        enemyHPBar.setPreferredSize(new Dimension(250, 20));
+        enemyHPBar.setStringPainted(false); // text outside bar
+        enemyHPBar.setForeground(Color.GREEN);
+        enemyHPBar.setBackground(Color.DARK_GRAY);
+        enemyHPBar.setBorder(BorderFactory.createEmptyBorder());
+
+        // Enemy HP label (outside the bar)
         enemyHPLabel = new JLabel("HP: " + enemy.getCurrentHealth() + "/" + enemy.getMaxHealth(), SwingConstants.CENTER);
+        enemyHPLabel.setForeground(Color.WHITE);
+        enemyHPLabel.setFont(new Font("Century Gothic", Font.PLAIN, 12));
+        enemyHPLabel.setPreferredSize(new Dimension(100, 30));
 
-        enemyNameLabel.setFont(nameFont); enemyNameLabel.setForeground(white);
-        enemyHPLabel.setFont(infoFont); enemyHPLabel.setForeground(white);
+        // Horizontal stack panel
+        JPanel enemyStack = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 5)); // horizontal spacing
+        enemyStack.setBackground(Color.BLACK);
+        enemyStack.add(enemyNameLabel);
+        enemyStack.add(enemyHPBar);
+        enemyStack.add(enemyHPLabel);
 
-        enemyPanel.add(enemyNameLabel);
-        enemyPanel.add(enemyHPLabel);
+        // Container panel with white border and padding
+        JPanel enemyBox = new JPanel(new BorderLayout());
+        enemyBox.setBackground(Color.BLACK);
+        enemyBox.setOpaque(true);
+        enemyBox.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.WHITE, 2),
+                BorderFactory.createEmptyBorder(8, 12, 8, 12)
+        ));
+        enemyBox.add(enemyStack, BorderLayout.CENTER);
+        enemyBox.setPreferredSize(new Dimension(520, 50));
 
-        // Add both sub-panels to the top panel
-        top.add(playerPanel);
-        top.add(enemyPanel);
-
+        top.add(enemyBox);
         add(top, BorderLayout.NORTH);
     }
 
 
-    private void setupBottomButtons() {
+    private void setupBottomPanel() {
+        // ensure buttons exist before configuring them
+        skillBtn1 = new HoverButton("Skill 1");
+        skillBtn2 = new HoverButton("Skill 2");
+        skillBtn3 = new HoverButton("Skill 3");
+        backBtn   = new HoverButton("Back");
+
+        // Bottom contains player info inside a white outlined box, then skill buttons
         JPanel bottom = new JPanel();
-        bottom.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 12));
-        bottom.setBackground(Color.DARK_GRAY);
+        bottom.setLayout(new BoxLayout(bottom, BoxLayout.Y_AXIS));
+        bottom.setBackground(Color.BLACK);
+        bottom.setOpaque(true);
 
-        skillBtn1 = new HoverButton("Chrono Slash");
-        skillBtn2 = new HoverButton("Time Shield");
-        skillBtn3 = new HoverButton("Reverse Flow");
-        backBtn = new HoverButton("Back");
+        // player info stack
+        playerNameLabel = new JLabel(player.getName(), SwingConstants.LEFT);
+        playerNameLabel.setForeground(Color.WHITE);
+        playerNameLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
 
-        Font btnFont = new Font("SansSerif", Font.PLAIN, 16);
+        playerHPLabel = new JLabel("HP: " + player.getCurrentHealth() + "/" + player.getMaxHealth(), SwingConstants.RIGHT);
+        playerHPLabel.setForeground(Color.WHITE);
+        playerHPLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        playerHPBar = new JProgressBar(0, Math.max(1, player.getMaxHealth()));
+        playerHPBar.setValue(player.getCurrentHealth());
+        playerHPBar.setPreferredSize(new Dimension(320, 16));
+        playerHPBar.setStringPainted(true);
+        playerHPBar.setForeground(Color.WHITE);
+        playerHPBar.setBackground(Color.DARK_GRAY);
+
+        playerLevelLabel = new JLabel("Lv: " + player.getLevel(), SwingConstants.RIGHT);
+        playerLevelLabel.setForeground(Color.WHITE);
+        playerLevelLabel.setFont(new Font("SansSerif", Font.PLAIN, 12));
+
+        JPanel playerInfo = new JPanel(new BorderLayout(8,2));
+        playerInfo.setBackground(Color.BLACK);
+        playerInfo.setOpaque(true);
+
+        JPanel leftStack = new JPanel(new GridLayout(1,1));
+        leftStack.setBackground(Color.BLACK);
+        leftStack.add(playerNameLabel);
+
+        JPanel rightStack = new JPanel(new GridLayout(2,1));
+        rightStack.setBackground(Color.BLACK);
+        rightStack.add(playerHPLabel);
+        rightStack.add(playerLevelLabel);
+
+        playerInfo.add(leftStack, BorderLayout.WEST);
+        playerInfo.add(playerHPBar, BorderLayout.CENTER);
+        playerInfo.add(rightStack, BorderLayout.EAST);
+
+        JPanel playerBox = new JPanel(new BorderLayout());
+        playerBox.setBackground(Color.BLACK);
+        playerBox.setOpaque(true);
+        playerBox.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.WHITE, 2),
+                BorderFactory.createEmptyBorder(8,12,8,12)
+        ));
+        playerBox.add(playerInfo, BorderLayout.CENTER);
+        playerBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
+
+        // buttons row (centered, black background)
+        JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 8));
+        buttonsPanel.setBackground(Color.BLACK);
+        buttonsPanel.setOpaque(true);
+
+        Font btnFont = new Font("SansSerif", Font.PLAIN, 14);
         skillBtn1.setFont(btnFont);
         skillBtn2.setFont(btnFont);
         skillBtn3.setFont(btnFont);
         backBtn.setFont(btnFont);
 
-        backBtn.setEnabled(false);
-        backBtn.addActionListener(e -> confirmBackToMenu());
+        // optionally give buttons a thin white border to match screenshot
+        Border btnBorder = BorderFactory.createLineBorder(Color.WHITE, 2);
+        skillBtn1.setBorder(btnBorder);
+        skillBtn2.setBorder(btnBorder);
+        skillBtn3.setBorder(btnBorder);
+        backBtn.setBorder(btnBorder);
 
-        bottom.add(skillBtn1);
-        bottom.add(skillBtn2);
-        bottom.add(skillBtn3);
-        bottom.add(backBtn);
+        buttonsPanel.add(skillBtn1);
+        buttonsPanel.add(skillBtn2);
+        buttonsPanel.add(skillBtn3);
+
+        bottom.add(Box.createVerticalStrut(8));
+        bottom.add(playerBox);
+        bottom.add(Box.createVerticalStrut(12));
+        bottom.add(buttonsPanel);
+        bottom.add(Box.createVerticalStrut(8));
 
         add(bottom, BorderLayout.SOUTH);
     }
@@ -122,6 +197,7 @@ public class BattlePanel extends JPanel {
         enemy = new Goblin();
 
         setupTopPanel();
+        setupBottomPanel();
         updateLabels();
         setupSkillButtons();
 
@@ -267,21 +343,28 @@ public class BattlePanel extends JPanel {
 
 
     private void refreshEnemyPanel() {
+    if (enemy != null && enemyHPLabel != null && enemyHPBar != null) {
         enemyNameLabel.setText(enemy.getName());
+        enemyHPBar.setMaximum(enemy.getMaxHealth());
+        enemyHPBar.setValue(enemy.getCurrentHealth());
         enemyHPLabel.setText("HP: " + enemy.getCurrentHealth() + "/" + enemy.getMaxHealth());
-        enemyHPLabel.setForeground(Color.green);
+
+        double hpPercent = (double) enemy.getCurrentHealth() / enemy.getMaxHealth();
+        enemyHPBar.setForeground(hpPercent <= 0.3 ? Color.RED : Color.GREEN);
     }
+}
+
 
         private void nextEnemyOrRealm() {
         // Tutorial
         if (mode.equals("Tutorial")) {
             if (enemy instanceof Goblin) {
+                refreshEnemyPanel();
+                clearBattleLog();                     // clear previous logs
                 player.levelUp(0.10, 0.10);
                 resetCooldownsOnKill();       // reset skill cooldowns
                 enemy = new Cultist();
                 updateLabels();
-                refreshEnemyPanel();
-                clearBattleLog();                     // clear previous logs
                 log("🔥 New enemy: " + enemy.getName());
                 enableSkillButtons();
                 setupSkillButtons();
@@ -424,7 +507,7 @@ public class BattlePanel extends JPanel {
 
     private void healPlayerFull() {
         player.setCurrentHealth(player.getMaxHealth());
-        log("💖 Player healed to full health!");
+        log("Regained Vitality!!!");
     }
 
     private void clearBattleLog() {
@@ -439,28 +522,31 @@ public class BattlePanel extends JPanel {
     }
 
     private void updateLabels() {
-        playerHPLabel.setText("HP: " + player.getCurrentHealth() + "/" + player.getMaxHealth());
-        double playerHpPercent = Math.max(0, (double) player.getCurrentHealth() / player.getMaxHealth());
-        if (playerHpPercent <= 0.3) {
-            playerHPLabel.setForeground(Color.RED);
-        } else {
-            playerHPLabel.setForeground(Color.green);
-        }
+        // Update player HP bar
+        playerHPBar.setMaximum(player.getMaxHealth());
+        playerHPBar.setValue(player.getCurrentHealth());
+        double playerHpPercent = (double) player.getCurrentHealth() / player.getMaxHealth();
+        playerHPBar.setForeground(playerHpPercent <= 0.3 ? Color.RED : Color.GREEN);
+        playerHPBar.setString("HP: " + player.getCurrentHealth() + "/" + player.getMaxHealth());
 
+        // Update enemy HP bar
         if (enemy != null) {
-            enemyHPLabel.setText("HP: " + enemy.getCurrentHealth() + "/" + enemy.getMaxHealth());
-            double enemyHpPercent = Math.max(0, (double) enemy.getCurrentHealth() / enemy.getMaxHealth());
-            if (enemyHpPercent <= 0.3) {
-                enemyHPLabel.setForeground(Color.RED);
-            } else {
-                enemyHPLabel.setForeground(Color.green);
-            }
+            enemyHPBar.setMaximum(enemy.getMaxHealth());
+            enemyHPBar.setValue(enemy.getCurrentHealth());
+            double enemyHpPercent = (double) enemy.getCurrentHealth() / enemy.getMaxHealth();
+            enemyHPBar.setForeground(enemyHpPercent <= 0.3 ? Color.RED : Color.GREEN);
+            enemyHPBar.setString("HP: " + enemy.getCurrentHealth() + "/" + enemy.getMaxHealth());
         }
 
+        // Optional: update level label
         playerLevelLabel.setText("Level: " + player.getLevel());
     }
 
+
+
     public void log(String msg) {
+        Font logFont = new Font("Courier New", Font.PLAIN, 16); // your desired font
+        battleLog.setFont(logFont);
         battleLog.append(msg + "\n\n");
         battleLog.setCaretPosition(battleLog.getDocument().getLength()); // auto-scroll
     }
@@ -501,6 +587,24 @@ public class BattlePanel extends JPanel {
 
         JScrollPane scrollPane = new JScrollPane(battleLog);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        // make the entire scroll area black and remove borders so no gray shows
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(Color.BLACK);
+        scrollPane.getViewport().setBackground(Color.BLACK);
+        scrollPane.setViewportBorder(null);
+
+        JPanel corner = new JPanel();
+        corner.setBackground(Color.BLACK);
+        corner.setOpaque(true);
+        scrollPane.setCorner(JScrollPane.LOWER_RIGHT_CORNER, corner);
+        scrollPane.setCorner(JScrollPane.UPPER_RIGHT_CORNER, corner);
+
+        JScrollBar vbar = scrollPane.getVerticalScrollBar();
+        if (vbar != null) {
+            vbar.setBackground(Color.BLACK);
+            vbar.setOpaque(true);
+        }
 
         add(scrollPane, BorderLayout.CENTER);
     }
