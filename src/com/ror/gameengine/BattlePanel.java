@@ -13,8 +13,8 @@ public class BattlePanel extends JPanel {
     public HoverButton skillBtn1, skillBtn2, skillBtn3, backBtn;
     public JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel, playerLevelLabel;
 
-    public Entity player;
-    public Entity enemy;
+    private Entity player;
+    private Entity enemy;
     public boolean playerTurn = true;
 
     // Player effect flags
@@ -28,55 +28,59 @@ public class BattlePanel extends JPanel {
     int burnTurnsRemaining = 0;
 
     public String mode = "Tutorial";
-
-    public BattlePanel(GameFrame parent) {
-        this.parent = parent;
+    public BattlePanel(GameFrame parent) {;
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        setupTopPanel();
         setupBattleLog();
         setupBottomButtons();
     }
 
+
     private void setupTopPanel() {
-        JPanel top = new JPanel(new GridLayout(3, 2));
+        JPanel top = new JPanel(new GridLayout(1, 2)); // 2 columns: left = player, right = enemy
         top.setBackground(Color.BLACK);
 
-        playerNameLabel = new JLabel("Player", SwingConstants.CENTER);
-        enemyNameLabel = new JLabel("Enemy", SwingConstants.CENTER);
-        playerHPLabel = new JLabel("HP: --", SwingConstants.CENTER);
-        enemyHPLabel = new JLabel("HP: --", SwingConstants.CENTER);
-        playerLevelLabel = new JLabel("Level: --", SwingConstants.CENTER);
-
         Font nameFont = new Font("SansSerif", Font.BOLD, 16);
-        Font hpFont = new Font("SansSerif", Font.PLAIN, 14);
-        Font levelFont = new Font("SansSerif", Font.PLAIN, 14);
+        Font infoFont = new Font("SansSerif", Font.PLAIN, 14);
         Color white = Color.WHITE;
 
-        playerNameLabel.setFont(nameFont); playerNameLabel.setForeground(white);
-        enemyNameLabel.setFont(nameFont); enemyNameLabel.setForeground(white);
-        playerHPLabel.setFont(hpFont); playerHPLabel.setForeground(white);
-        enemyHPLabel.setFont(hpFont); enemyHPLabel.setForeground(white);
-        playerLevelLabel.setFont(levelFont); playerLevelLabel.setForeground(white);
+        // --- Player panel (left) ---
+        JPanel playerPanel = new JPanel(new GridLayout(3, 1));
+        playerPanel.setBackground(Color.BLACK);
 
-        top.add(playerNameLabel);
-        top.add(enemyNameLabel);
-        top.add(playerHPLabel);
-        top.add(enemyHPLabel);
-        top.add(playerLevelLabel);
-        top.add(new JLabel("")); // placeholder
+        playerNameLabel = new JLabel(player.getName(), SwingConstants.CENTER);
+        playerHPLabel = new JLabel("HP: " + player.getCurrentHealth() + "/" + player.getMaxHealth(), SwingConstants.CENTER);
+        playerLevelLabel = new JLabel("Level: " + player.getLevel(), SwingConstants.CENTER);
+
+        playerNameLabel.setFont(nameFont); playerNameLabel.setForeground(white);
+        playerHPLabel.setFont(infoFont); playerHPLabel.setForeground(white);
+        playerLevelLabel.setFont(infoFont); playerLevelLabel.setForeground(white);
+
+        playerPanel.add(playerNameLabel);
+        playerPanel.add(playerHPLabel);
+        playerPanel.add(playerLevelLabel);
+
+        // --- Enemy panel (right) ---
+        JPanel enemyPanel = new JPanel(new GridLayout(2, 1));
+        enemyPanel.setBackground(Color.BLACK);
+
+        enemyNameLabel = new JLabel(enemy.getName(), SwingConstants.CENTER);
+        enemyHPLabel = new JLabel("HP: " + enemy.getCurrentHealth() + "/" + enemy.getMaxHealth(), SwingConstants.CENTER);
+
+        enemyNameLabel.setFont(nameFont); enemyNameLabel.setForeground(white);
+        enemyHPLabel.setFont(infoFont); enemyHPLabel.setForeground(white);
+
+        enemyPanel.add(enemyNameLabel);
+        enemyPanel.add(enemyHPLabel);
+
+        // Add both sub-panels to the top panel
+        top.add(playerPanel);
+        top.add(enemyPanel);
+
         add(top, BorderLayout.NORTH);
     }
 
-    private void setupBattleLog() {
-        battleLog = new JTextArea();
-        battleLog.setEditable(false);
-        battleLog.setBackground(Color.BLACK);
-        battleLog.setForeground(Color.WHITE);
-        battleLog.setFont(new Font("Century Gothic", Font.PLAIN, 16));
-        add(new JScrollPane(battleLog), BorderLayout.CENTER);
-    }
 
     private void setupBottomButtons() {
         JPanel bottom = new JPanel(new GridLayout(1, 4, 8, 8));
@@ -115,12 +119,14 @@ public class BattlePanel extends JPanel {
 
     public void startBattle(Entity chosenPlayer) {
         this.player = chosenPlayer;
+        this.enemy = new Goblin();
         resetPlayerEffects();
         battleLog.setText("");
 
         // Set tutorial enemy
         enemy = new Goblin();
 
+        setupTopPanel();
         updateLabels();
         setupSkillButtons();
 
@@ -357,6 +363,7 @@ public class BattlePanel extends JPanel {
 
     private void log(String msg) {
         battleLog.append(msg + "\n\n");
+        battleLog.setCaretPosition(battleLog.getDocument().getLength()); // auto-scroll
     }
 
     private void disableSkillButtons() {
@@ -379,5 +386,20 @@ public class BattlePanel extends JPanel {
         burnDamageToEnemy = 0;
         burnTurnsRemaining = 0;
         playerTurn = true;
+    }
+
+    private void setupBattleLog() {
+        battleLog = new JTextArea();
+        battleLog.setEditable(false);
+        battleLog.setBackground(Color.BLACK);
+        battleLog.setForeground(Color.WHITE);
+        battleLog.setFont(new Font("Monospaced", Font.PLAIN, 14));
+        battleLog.setLineWrap(true);
+        battleLog.setWrapStyleWord(true);
+
+        JScrollPane scrollPane = new JScrollPane(battleLog);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+
+        add(scrollPane, BorderLayout.CENTER);
     }
 }

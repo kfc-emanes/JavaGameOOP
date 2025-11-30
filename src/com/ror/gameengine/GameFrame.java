@@ -30,15 +30,15 @@ public class GameFrame extends JFrame {
     }
 
     public void showMenu() {
-        ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "Menu");
+        ((CardLayout)getContentPane().getLayout()).show(getContentPane(), "Menu");
     }
 
     public void showSelect() {
-        ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "Select");
+        ((CardLayout)getContentPane().getLayout()).show(getContentPane(), "Select");
     }
 
     public void showBattle(Entity chosenCharacter) {
+        battlePanel.startBattle(chosenCharacter); // example first enemy
         ((CardLayout) getContentPane().getLayout()).show(getContentPane(), "Battle");
-        battlePanel.startBattle(chosenCharacter);
     }
 }
