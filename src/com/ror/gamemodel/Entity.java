@@ -1,5 +1,7 @@
 package com.ror.gamemodel;
 
+import com.ror.gameengine.BattlePanel;
+
 public abstract class Entity {
     public String name;
     public int maxHealth;
@@ -64,15 +66,18 @@ public abstract class Entity {
         }
     }
 
-    public void useSkill(int slot, Entity target) {
-        if (slot >= 0 && slot < skills.length && skills[slot] != null) {
-            Skill skill = skills[slot];
-            System.out.println(name + " uses " + skill.getName() + " on " + target.getName() + "!");
-            skill.apply(this, target); // now using apply()
-        } else {
-            System.out.println("Invalid skill slot or no skill equipped!");
+    public void useSkill(int slot, Entity target, BattlePanel panel) {
+        Skill skill = skills[slot];
+        if (skill == null) return;
+
+        if (!skill.isOnCooldown()) {
+            skill.apply(this, target, panel); // <-- 'this' is the user
+            skill.triggerCooldown();
         }
     }
+
+
+
 
     public Skill getSkillByName(String skillName) {
         for (Skill skill : skills) {

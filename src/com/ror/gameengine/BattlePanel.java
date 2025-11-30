@@ -163,28 +163,30 @@ public class BattlePanel extends JPanel {
     }
 
     private void playerUseSkill(int slot) {
-        if (!playerTurn) return;
         Skill skill = player.getSkills()[slot];
+        if (skill == null) return;
 
         if (skill.isOnCooldown()) {
-            log("⏳ " + skill.getName() + " is on cooldown (" + skill.getCurrentCooldown() + " turns left).");
+            log(skill.getName() + " is on cooldown!");
             return;
         }
 
-        skill.apply(player, enemy);
+        // Use skill logic
+        skill.apply(player, enemy, this);  
+        updateLabels();        
+        skill.triggerCooldown(); 
 
-        if (skill.getCooldown() > 0) skill.triggerCooldown();
-        for (Skill s : player.getSkills()) if (s != skill) s.reduceCooldown();
+        // Check if enemy is dead
+        if (!enemy.isAlive()) {
+            log("✅ " + enemy.getName() + " defeated!");
+            nextEnemyOrRealm();   
+            return;
+        }
 
-        updateSkillButtons();
         playerTurn = false;
-
-        Timer timer = new Timer(800, e -> {
-            ((Timer) e.getSource()).stop();
-            enemyTurn();
-        });
-        timer.setRepeats(false);
-        timer.start();
+        Timer enemyTimer = new Timer(1000, e -> enemyTurn()); 
+        enemyTimer.setRepeats(false);
+        enemyTimer.start();
     }
 
     private void enemyTurn() {
@@ -257,87 +259,105 @@ public class BattlePanel extends JPanel {
     }
 
     private void nextEnemyOrRealm() {
-        switch (mode) {
-            case "Tutorial":
-                if (enemy instanceof Goblin) {
-                    enemy = new Cultist();
-                    clearBattleLog();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    log("🔥 New enemy: " + enemy.getName());
-                    return;
-                }
-                if (enemy instanceof Cultist) {
-                    mode = "Realm1";
-                    enemy = new SkySerpent();
-                    clearBattleLog();
-                    healPlayerFull();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    backBtn.setEnabled(true);
-                    return;
-                }
-            case "Realm1":
-                if (enemy instanceof SkySerpent) {
-                    enemy = new GeneralZephra();
-                    clearBattleLog();
-                    healPlayerFull();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    return;
-                }
-                if (enemy instanceof GeneralZephra) {
-                    mode = "Realm2";
-                    enemy = new MoltenImp();
-                    clearBattleLog();
-                    healPlayerFull();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    return;
-                }
-            case "Realm2":
-                if (enemy instanceof MoltenImp) {
-                    enemy = new GeneralVulkrag();
-                    clearBattleLog();
-                    healPlayerFull();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    return;
-                }
-                if (enemy instanceof GeneralVulkrag) {
-                    mode = "Realm3";
-                    enemy = new ShadowCreeper();
-                    clearBattleLog();
-                    healPlayerFull();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    return;
-                }
-            case "Realm3":
-                if (enemy instanceof ShadowCreeper) {
-                    enemy = new Vorthnar();
-                    clearBattleLog();
-                    healPlayerFull();
-                    updateLabels();
-                    enableSkillButtons();
-                    setupSkillButtons();
-                    return;
-                }
-                if (enemy instanceof Vorthnar) {
-                    JOptionPane.showMessageDialog(this,
-                            "🏆 CHAPTER III COMPLETE! You defeated Lord Vorthnar!",
-                            "Victory!", JOptionPane.INFORMATION_MESSAGE);
-                    disableSkillButtons();
-                    return;
-                }
+    // Tutorial
+    if (mode.equals("Tutorial")) {
+        if (enemy instanceof Goblin) {
+             enemy = new Cultist();
+            healPlayerFull();
+            updateLabels();
+            log("🔥 New enemy: " + enemy.getName());
+            enableSkillButtons();
+            setupSkillButtons();
+            return;
+        }
+        if (enemy instanceof Cultist) {
+            mode = "Realm1";
+            enemy = new SkySerpent();
+            clearBattleLog();
+            healPlayerFull();
+            log("🏁 Tutorial complete! Welcome to Realm 1.");
+            log("🔥 New enemy: " + enemy.getName());
+            updateLabels();
+            enableSkillButtons();
+            setupSkillButtons();
+            backBtn.setEnabled(true);
+            return;
         }
     }
+
+    // Realm 1
+    if (mode.equals("Realm1")) {
+        if (enemy instanceof SkySerpent) {
+            enemy = new GeneralZephra();
+            clearBattleLog();
+            healPlayerFull();
+            log("🔥 New enemy: " + enemy.getName());
+            updateLabels();
+            enableSkillButtons();
+            setupSkillButtons();
+            return;
+        }
+        if (enemy instanceof GeneralZephra) {
+            mode = "Realm2";
+            enemy = new MoltenImp();
+            clearBattleLog();
+            healPlayerFull();
+            log("🏁 Realm 1 complete!");
+            log("🔥 New enemy: " + enemy.getName());
+            updateLabels();
+            enableSkillButtons();
+            setupSkillButtons();
+            return;
+        }
+    }
+
+    // Realm 2
+    if (mode.equals("Realm2")) {
+        if (enemy instanceof MoltenImp) {
+            enemy = new GeneralVulkrag();
+            clearBattleLog();
+            healPlayerFull();
+            log("🔥 New enemy: " + enemy.getName());
+            updateLabels();
+            enableSkillButtons();
+            setupSkillButtons();
+            return;
+        }
+        if (enemy instanceof GeneralVulkrag) {
+            mode = "Realm3";
+            enemy = new ShadowCreeper();
+            clearBattleLog();
+            healPlayerFull();
+            log("🏁 Realm 2 complete!");
+            log("🔥 New enemy: " + enemy.getName());
+            updateLabels();
+            enableSkillButtons();
+            setupSkillButtons();
+            return;
+        }
+    }
+
+    // Realm 3
+    if (mode.equals("Realm3")) {
+        if (enemy instanceof ShadowCreeper) {
+            enemy = new Vorthnar();
+            clearBattleLog();
+            healPlayerFull();
+            log("🔥 New enemy: " + enemy.getName());
+            updateLabels();
+            enableSkillButtons();
+            setupSkillButtons();
+            return;
+        }
+        if (enemy instanceof Vorthnar) {
+            clearBattleLog();
+            log("🏆 CHAPTER III COMPLETE! You defeated Lord Vorthnar!");
+            updateLabels();
+            disableSkillButtons();
+            return;
+        }
+    }
+}
 
     private void healPlayerFull() {
         player.setCurrentHealth(player.getMaxHealth());
@@ -361,7 +381,7 @@ public class BattlePanel extends JPanel {
         playerLevelLabel.setText("Level: " + player.getLevel());
     }
 
-    private void log(String msg) {
+    public void log(String msg) {
         battleLog.append(msg + "\n\n");
         battleLog.setCaretPosition(battleLog.getDocument().getLength()); // auto-scroll
     }

@@ -1,5 +1,6 @@
 package com.ror.gamemodel.Playable;
 
+import com.ror.gameengine.BattlePanel;
 import com.ror.gamemodel.*;
 
 public class Nyx extends Entity {
@@ -8,27 +9,27 @@ public class Nyx extends Entity {
 
         Skill shadowBlink = new Skill("Shadow Blink", 35, 2) { // teleport + strong hit
             @Override
-            public void apply(Entity user, Entity target) {
+            public void apply(Entity user, Entity target, BattlePanel panel) {
                 int damage = power + user.getAtk();
                 target.takeDamage(damage);
-                System.out.println(user.getName() + " teleports and strikes " + target.getName() + " for " + damage + " damage!");
+                panel.log(user.getName() + " teleports and strikes " + target.getName() + " for " + damage + " damage!");
             }
         };
 
         Skill nightPoison = new Skill("Night Poison", 10, 2) { // applies poison + slow
             @Override
-            public void apply(Entity user, Entity target) {
+            public void apply(Entity user, Entity target, BattlePanel panel) {
                 target.takeDamage(power); // simple poison damage for now
-                System.out.println(user.getName() + " poisons " + target.getName() + " for " + power + " damage!");
+                panel.log(user.getName() + " poisons " + target.getName() + " for " + power + " damage!");
                 // Here you could also add status effects like slow if you implement them
             }
         };
 
         Skill darkVeil = new Skill("Dark Veil", 0, 3) { // blind / evade
             @Override
-            public void apply(Entity user, Entity target) {
+            public void apply(Entity user, Entity target, BattlePanel panel) {
                 target.setBlinded(true); // you'll need to implement setBlinded in Entity
-                System.out.println(user.getName() + " casts Dark Veil! " + target.getName() + " is blinded!");
+                panel.log(user.getName() + " casts Dark Veil! " + target.getName() + " is blinded!");
             }
         };
 

@@ -1,9 +1,10 @@
 package com.ror.gamemodel;
 
+import com.ror.gameengine.BattlePanel;
+
 public abstract class Skill {
     protected String name;
     protected int power;
-    protected int level;
     protected int cooldown;
     protected int currentCooldown;
 
@@ -16,26 +17,14 @@ public abstract class Skill {
 
     public String getName() { return name; }
     public int getPower() { return power; }
-    public int getLevel() { return level; }
     public int getCooldown() { return cooldown; }
     public int getCurrentCooldown() { return currentCooldown; }
 
-    public boolean isOnCooldown() {
-        return currentCooldown > 0;
-    }
+    public boolean isOnCooldown() { return currentCooldown > 0; }
+    public void triggerCooldown() { currentCooldown = cooldown; }
+    public void reduceCooldown() { if(currentCooldown>0) currentCooldown--; }
+    public void resetCooldown() { currentCooldown = 0; }
 
-    public void triggerCooldown() {
-        currentCooldown = cooldown;
-    }
-
-    public void reduceCooldown() {
-        if (currentCooldown > 0) currentCooldown--;
-    }
-
-    public void resetCooldown() {
-        currentCooldown = 0;
-    }
-
-    // THIS IS THE OOP PART: each skill defines its own behavior hehw
-    public abstract void apply(Entity user, Entity target);
+    // Logic only, no UI
+    public abstract void apply(Entity user, Entity target, BattlePanel panel);
 }
