@@ -21,10 +21,6 @@ public class BattlePanel extends JPanel {
     private Entity enemy;
     public boolean playerTurn = true;
 
-    int delayedDamageToEnemy = 0;
-    int burnDamageToEnemy = 0;
-    int burnTurnsRemaining = 0;
-
     public String mode = "Tutorial";
     public BattlePanel(GameFrame parent) {
         this.parent = parent;
@@ -273,15 +269,6 @@ public class BattlePanel extends JPanel {
             return;
         }
 
-        // Burn damage
-        if (burnTurnsRemaining > 0) {
-            enemy.takeDamage(burnDamageToEnemy);
-            burnTurnsRemaining--;
-            log("🔥 Burn deals " + burnDamageToEnemy + " damage (" + burnTurnsRemaining + " turns left).");
-            updateLabels();
-            if (!enemy.isAlive()) { handleEnemyDefeat(); return; }
-        }
-
         // Enemy attack logic
         // === Enemy attack logic ===
     if (enemy.isBlinded()) {
@@ -302,16 +289,6 @@ public class BattlePanel extends JPanel {
         log(enemy.getName() + " attacks for " + damage + " damage!");
         updateLabels();
     }
-
-
-        // Delayed enemy damage (e.g., Chrono Slash)
-        if (delayedDamageToEnemy > 0 && enemy.isAlive()) {
-            log("💫 Delayed damage triggers for " + delayedDamageToEnemy + "!");
-            enemy.takeDamage(delayedDamageToEnemy);
-            delayedDamageToEnemy = 0;
-            updateLabels();
-            if (!enemy.isAlive()) { handleEnemyDefeat(); return; }
-        }
 
         // Reduce player skill cooldowns at end of enemy turn
         for (Skill s : player.getSkills()) s.reduceCooldown();
