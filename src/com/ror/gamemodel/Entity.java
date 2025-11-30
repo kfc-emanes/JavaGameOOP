@@ -1,6 +1,6 @@
 package com.ror.gamemodel;
 
-public class Entity {
+public abstract class Entity {
     public String name;
     public int maxHealth;
     public int currHealth;
@@ -9,6 +9,10 @@ public class Entity {
     public Skill[] skills;
     public int currentCooldown;
     public int level = 0;
+
+    protected boolean shieldActive = false; // track shield status
+    private boolean dodgeActive = false;
+    private boolean blinded = false;
 
     public Entity(String name, int maxHealth, int currHealth, int atk, int def) {
         this.name = name;
@@ -19,40 +23,25 @@ public class Entity {
         this.skills = new Skill[3];
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public int getMaxHealth() {
-        return maxHealth;
-    }
-
-    public int getCurrentHealth() {
-        return currHealth;
-    }
-
-    public int getAtk() {
-        return atk;
-    }
-
-    public int getDef() {
-        return def;
-    }
+    public String getName() { return name; }
+    public int getMaxHealth() { return maxHealth; }
+    public int getCurrentHealth() { return currHealth; }
+    public int getAtk() { return atk; }
+    public int getDef() { return def; }
+    public Skill[] getSkills() { return skills; }
+    public int getLevel() { return level; }
 
     public void setCurrentHealth(int health) {
         this.currHealth = Math.max(0, Math.min(health, maxHealth));
     }
 
-    public void setCurrentCooldown(int cooldown) {
-        this.currentCooldown = cooldown;
-    }
-
-    public Skill[] getSkills() {
-        return skills;
-    }
-
     public void takeDamage(int dmg) {
         int actualDamage = Math.max(0, dmg - def);
+        if (shieldActive) {
+            actualDamage = 0; // shield blocks damage
+            shieldActive = false; // shield consumed
+            System.out.println(name + "'s shield blocked the attack!");
+        }
         currHealth -= actualDamage;
         if (currHealth < 0) currHealth = 0;
         System.out.println(name + " took " + actualDamage + " damage! " + name + " has " + currHealth + " HP left.");
@@ -79,19 +68,17 @@ public class Entity {
         if (slot >= 0 && slot < skills.length && skills[slot] != null) {
             Skill skill = skills[slot];
             System.out.println(name + " uses " + skill.getName() + " on " + target.getName() + "!");
-            skill.use(this, target);
+            skill.apply(this, target); // now using apply()
         } else {
             System.out.println("Invalid skill slot or no skill equipped!");
         }
     }
 
-    public Skill getSkillByName(String name) {
-    for (Skill skill : skills) {
-        if (skill.getName().equalsIgnoreCase(name)) {
-            return skill;
+    public Skill getSkillByName(String skillName) {
+        for (Skill skill : skills) {
+            if (skill.getName().equalsIgnoreCase(skillName)) return skill;
         }
-    }
-    return null;
+        return null;
     }
 
     public void setSkills(Skill[] skills) {
@@ -106,10 +93,9 @@ public class Entity {
         currHealth += hpIncrease;
         atk += atkIncrease;
 
-        // Reset all skill cooldowns
         if (skills != null) {
             for (Skill skill : skills) {
-                if (skill != null) skill.resetCooldown(); // reset to 0
+                if (skill != null) skill.resetCooldown();
             }
         }
         level++;
@@ -117,7 +103,37 @@ public class Entity {
         System.out.println("All skill cooldowns have been reset!");
     }
 
-    public int getLevel() {
-        return level;
+    // LOOK OVER HERE -- NEW shield setter & getter for characters, this one's for andrew
+    public void setShieldActive(boolean active) {
+        this.shieldActive = active;
+        if (active) System.out.println(name + " activates a shield!");
     }
+
+    public boolean isShieldActive() {
+        return shieldActive;
+    }
+
+    //for Flashey(windwalk)
+    public void setDodgeActive(boolean active) {
+        this.dodgeActive = active;
+    }
+
+    public boolean isDodgeActive() {
+        return dodgeActive;
+    }
+
+    //for Nyx(dark veil)
+    public boolean isBlinded() {
+        return blinded;
+    }
+
+    public void setBlinded(boolean blinded) {
+        this.blinded = blinded;
+        if (blinded) {
+            System.out.println(name + " is now blinded!");
+        } else {
+            System.out.println(name + " is no longer blinded!");
+        }
+    }
+
 }

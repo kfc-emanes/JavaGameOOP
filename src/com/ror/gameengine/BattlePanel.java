@@ -6,38 +6,40 @@ import com.ror.gameutil.HoverButton;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-//import java.awt.event.ActionListener;
 
 public class BattlePanel extends JPanel {
     public GameFrame parent;
-    public JButton backButton;
     public JTextArea battleLog;
     public HoverButton skillBtn1, skillBtn2, skillBtn3, backBtn;
-    public JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel;
-    public JLabel playerLevelLabel;
-    public int healAmount;
+    public JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel, playerLevelLabel;
 
     public Entity player;
     public Entity enemy;
     public boolean playerTurn = true;
 
+    // Player effect flags
     boolean playerShieldActive = false;
     boolean playerDodgeActive = false;
-    public boolean enemyBlinded = false;
-    public int delayedDamageToEnemy = 0;
-    public int burnDamageToEnemy = 0;         
-    public int burnTurnsRemaining = 0;        
-    public int lastDamageTakenByPlayer = 0;
-    public String mode = "Tutorial";
-    public WorldManager worldManager = new WorldManager();
+    boolean enemyBlinded = false;
 
+    // Over-time effects
+    int delayedDamageToEnemy = 0;
+    int burnDamageToEnemy = 0;
+    int burnTurnsRemaining = 0;
+
+    public String mode = "Tutorial";
 
     public BattlePanel(GameFrame parent) {
         this.parent = parent;
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
-        // Top: HP, names, level
+        setupTopPanel();
+        setupBattleLog();
+        setupBottomButtons();
+    }
+
+    private void setupTopPanel() {
         JPanel top = new JPanel(new GridLayout(3, 2));
         top.setBackground(Color.BLACK);
 
@@ -45,44 +47,38 @@ public class BattlePanel extends JPanel {
         enemyNameLabel = new JLabel("Enemy", SwingConstants.CENTER);
         playerHPLabel = new JLabel("HP: --", SwingConstants.CENTER);
         enemyHPLabel = new JLabel("HP: --", SwingConstants.CENTER);
-        playerLevelLabel = new JLabel("Level: --", SwingConstants.CENTER); // new
+        playerLevelLabel = new JLabel("Level: --", SwingConstants.CENTER);
 
-        // increase fonts for readability
         Font nameFont = new Font("SansSerif", Font.BOLD, 16);
         Font hpFont = new Font("SansSerif", Font.PLAIN, 14);
         Font levelFont = new Font("SansSerif", Font.PLAIN, 14);
-
         Color white = Color.WHITE;
-        playerNameLabel.setForeground(white);
-        enemyNameLabel.setForeground(white);
-        playerHPLabel.setForeground(white);
-        enemyHPLabel.setForeground(white);
-        playerLevelLabel.setForeground(white);
 
-        playerNameLabel.setFont(nameFont);
-        enemyNameLabel.setFont(nameFont);
-        playerHPLabel.setFont(hpFont);
-        enemyHPLabel.setFont(hpFont);
-        playerLevelLabel.setFont(levelFont);
+        playerNameLabel.setFont(nameFont); playerNameLabel.setForeground(white);
+        enemyNameLabel.setFont(nameFont); enemyNameLabel.setForeground(white);
+        playerHPLabel.setFont(hpFont); playerHPLabel.setForeground(white);
+        enemyHPLabel.setFont(hpFont); enemyHPLabel.setForeground(white);
+        playerLevelLabel.setFont(levelFont); playerLevelLabel.setForeground(white);
 
         top.add(playerNameLabel);
         top.add(enemyNameLabel);
         top.add(playerHPLabel);
         top.add(enemyHPLabel);
         top.add(playerLevelLabel);
-        top.add(new JLabel("")); // placeholder to keep grid alignment
-
+        top.add(new JLabel("")); // placeholder
         add(top, BorderLayout.NORTH);
+    }
 
-        // Center: battle log
+    private void setupBattleLog() {
         battleLog = new JTextArea();
         battleLog.setEditable(false);
         battleLog.setBackground(Color.BLACK);
         battleLog.setForeground(Color.WHITE);
-        battleLog.setFont(new Font("Century Gothic", Font.PLAIN, 16)); // bigger text
+        battleLog.setFont(new Font("Century Gothic", Font.PLAIN, 16));
         add(new JScrollPane(battleLog), BorderLayout.CENTER);
+    }
 
-        // Bottom: skill buttons
+    private void setupBottomButtons() {
         JPanel bottom = new JPanel(new GridLayout(1, 4, 8, 8));
         bottom.setBackground(Color.DARK_GRAY);
 
@@ -97,17 +93,8 @@ public class BattlePanel extends JPanel {
         skillBtn3.setFont(btnFont);
         backBtn.setFont(btnFont);
 
-        backBtn.addActionListener(e -> {
-        int confirm = JOptionPane.showConfirmDialog(
-        this,
-        "Are you sure you want to return to the Main Menu?",
-        "Confirm Return",
-        JOptionPane.YES_NO_OPTION
-        );
-        if (confirm == JOptionPane.YES_OPTION) {
-            parent.showMenu();
-        }
-        });
+        backBtn.setEnabled(false); // unlock later after tutorial
+        backBtn.addActionListener(e -> confirmBackToMenu());
 
         bottom.add(skillBtn1);
         bottom.add(skillBtn2);
@@ -115,470 +102,257 @@ public class BattlePanel extends JPanel {
         bottom.add(backBtn);
 
         add(bottom, BorderLayout.SOUTH);
-        backBtn.setEnabled(true);
-
     }
-    
+
+    private void confirmBackToMenu() {
+        int confirm = JOptionPane.showConfirmDialog(this,
+                "Return to Main Menu? Progress will be lost.",
+                "Confirm Exit", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if (confirm == JOptionPane.YES_OPTION) {
+            parent.showMenu();
+        }
+    }
+
     public void startBattle(Entity chosenPlayer) {
         this.player = chosenPlayer;
-        this.enemy = new Goblin(); // tutorial starts here
-
-        playerShieldActive = false;
-        enemyBlinded = false;
-        delayedDamageToEnemy = 0;
-        lastDamageTakenByPlayer = 0;
-        playerTurn = true;
-        mode = "Tutorial";
-
-        playerNameLabel.setText(player.getName());
-        enemyNameLabel.setText(enemy.getName());
-        updateHPLabels(); // now also updates level label
-
-        Skill[] skills = player.getSkills();
-        for (Skill sk : skills) sk.resetCooldown();
-        skillBtn1.setText(skills[0].getName());
-        skillBtn2.setText(skills[1].getName());
-        skillBtn3.setText(skills[2].getName());
-
-        clearListeners();
-
-        skillBtn1.addActionListener(e -> playerUseSkill(0));
-        skillBtn2.addActionListener(e -> playerUseSkill(1));
-        skillBtn3.addActionListener(e -> playerUseSkill(2));
-
+        resetPlayerEffects();
         battleLog.setText("");
-        log("⚔️ The Battle Begins. It's " + player.getName() + " VS " + enemy.getName() + "!");
 
-         JOptionPane.showMessageDialog(this,
-                    "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
+        // Set tutorial enemy
+        enemy = new Goblin();
+
+        updateLabels();
+        setupSkillButtons();
+
+        log("⚔️ Battle Begins: " + player.getName() + " VS " + enemy.getName() + "!");
+        JOptionPane.showMessageDialog(this,
+                "Welcome to Realms of Riftborne. I see you have selected " + player.getName() + ". Here's a little let-you-know:\n" +
                     "[!] You are pitted against a succession of enemies. Defeat each one of them to get through the levels.\n" +
                     "[!] Defeating a miniboss will allow you to proceed to the next realm.\n" +
-                    "[!] You restore " + healAmount + " health after every battle.\n" +
+                    "[!] You retain full health after every major battle.\n" +
                     "[!] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
                     "Pick a skill to begin your turn!",
                     "Tutorial", JOptionPane.INFORMATION_MESSAGE);
-        
-    
-
-        log("\nChoose a skill to begin your turn.");
 
         updateSkillButtons();
     }
 
-    private void clearListeners() {
+    private void setupSkillButtons() {
+        Skill[] skills = player.getSkills();
+        clearSkillListeners();
+
+        skillBtn1.setText(skills[0].getName());
+        skillBtn2.setText(skills[1].getName());
+        skillBtn3.setText(skills[2].getName());
+
+        skillBtn1.addActionListener(e -> playerUseSkill(0));
+        skillBtn2.addActionListener(e -> playerUseSkill(1));
+        skillBtn3.addActionListener(e -> playerUseSkill(2));
+    }
+
+    private void clearSkillListeners() {
         for (ActionListener al : skillBtn1.getActionListeners()) skillBtn1.removeActionListener(al);
         for (ActionListener al : skillBtn2.getActionListeners()) skillBtn2.removeActionListener(al);
         for (ActionListener al : skillBtn3.getActionListeners()) skillBtn3.removeActionListener(al);
     }
 
-    private void playerUseSkill(int index) {
+    private void playerUseSkill(int slot) {
         if (!playerTurn) return;
-        Skill s = player.getSkills()[index];
+        Skill skill = player.getSkills()[slot];
 
-        if (s.isOnCooldown()) {
-            log("⏳ " + s.getName() + " is on cooldown for " + s.getCurrentCooldown() + " more turns!");
+        if (skill.isOnCooldown()) {
+            log("⏳ " + skill.getName() + " is on cooldown (" + skill.getCurrentCooldown() + " turns left).");
             return;
         }
 
-        log(player.getName() + " uses " + s.getName() + "!");
+        skill.apply(player, enemy);
 
-        String type = s.getType();
-        
-        switch (type.toLowerCase()) {
-            case "chrono":
-                // Andrew's Timeblade: immediate damage + burn over time (no delayed hit)
-                int immediate = s.getPower() + player.getAtk();
-                enemy.takeDamage(immediate);
-                // configure burn: tune these values as desired
-                burnDamageToEnemy = Math.max(1, s.getPower() / 3);
-                burnTurnsRemaining = 3; // DOT lasts 3 enemy turns
-                log("⚔️ Timeblade strikes for " + immediate + " damage and applies a burn (" + burnDamageToEnemy + " x " + burnTurnsRemaining + " turns)!");
-                updateHPLabels();
-                break;
-            case "shield":
-                playerShieldActive = true;
-                log("🛡️ Time Shield activated! You’ll block the next attack and get healed.");
-                break;
-            case "dodge":
-               // Flashey's WindWalk: dodge incoming attack completely
-               playerDodgeActive = true;
-               log("💨 WindWalk activated! You'll evade the next attack completely!");
-               break;
-            case "reverse":
-                int lost = player.getMaxHealth() - player.getCurrentHealth();
-                int heal = (int) Math.ceil(lost * 0.5); // 50% of lost HP
-                if (heal <= 0) {
-                    log("♻️ Reverse F   low restores 0 HP (you are already at full health).");
-                } else {
-                    player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + heal));
-                    log("♻️ Reverse Flow restores " + heal + " HP (50% of lost HP)!");
-                    updateHPLabels();
-                }
-                break;
-            case "heal":
-               // Feather Barrier / healing skill: heals 40% of lost HP
-               int lostHP = player.getMaxHealth() - player.getCurrentHealth();
-               int healAmount = (int) Math.ceil(lostHP * 0.4);
-               if (healAmount <= 0) {
-                   log("✨ " + s.getName() + " — you are already at full health!");
-               } else {
-                   player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + healAmount));
-                   log("✨ " + s.getName() + " restores " + healAmount + " HP (40% of lost HP)!");
-                   updateHPLabels();
-               }
-               break;
-            case "blind":
-                enemyBlinded = true;
-                log("🌑 " + s.getName() + " — " + enemy.getName() + " is blinded and will miss the next attack!");
-                break;
-            default:
-                enemy.takeDamage(s.getPower() + player.getAtk());
-                log("💥 " + enemy.getName() + " takes " + (s.getPower() + player.getAtk()) + " damage!");
-                updateHPLabels();
-                break;
-        }
+        if (skill.getCooldown() > 0) skill.triggerCooldown();
+        for (Skill s : player.getSkills()) if (s != skill) s.reduceCooldown();
 
-
-        if (s.getCooldown() > 0) {
-            s.triggerCooldown();
-        }           
-
-
-        // Reduce cooldowns for other skills
-        for (Skill skill : player.getSkills()) {
-            if (skill != s) skill.reduceCooldown();
-        }
         updateSkillButtons();
         playerTurn = false;
 
-        Timer timer = new Timer(900, e -> {
+        Timer timer = new Timer(800, e -> {
             ((Timer) e.getSource()).stop();
             enemyTurn();
         });
         timer.setRepeats(false);
         timer.start();
-        
+    }
+
+    private void enemyTurn() {
+        if (!enemy.isAlive()) {
+            handleEnemyDefeat();
+            return;
+        }
+
+        // Burn damage
+        if (burnTurnsRemaining > 0) {
+            enemy.takeDamage(burnDamageToEnemy);
+            burnTurnsRemaining--;
+            log("🔥 Burn deals " + burnDamageToEnemy + " damage (" + burnTurnsRemaining + " turns left).");
+            updateLabels();
+            if (!enemy.isAlive()) { handleEnemyDefeat(); return; }
+        }
+
+        // Enemy attack logic
+        if (enemyBlinded) {
+            log(enemy.getName() + " is blinded and misses!");
+            enemyBlinded = false;
+        } else if (playerDodgeActive) {
+            log(player.getName() + " dodges the attack!");
+            playerDodgeActive = false;
+        } else if (playerShieldActive) {
+            log(player.getName() + "'s shield blocks the attack!");
+            playerShieldActive = false;
+        } else {
+            int damage = Math.max(0, enemy.getAtk() - player.getDef());
+            player.takeDamage(damage);
+            log(enemy.getName() + " attacks for " + damage + " damage!");
+            updateLabels();
+        }
+
+        // Delayed enemy damage (e.g., Chrono Slash)
+        if (delayedDamageToEnemy > 0 && enemy.isAlive()) {
+            log("💫 Delayed damage triggers for " + delayedDamageToEnemy + "!");
+            enemy.takeDamage(delayedDamageToEnemy);
+            delayedDamageToEnemy = 0;
+            updateLabels();
+            if (!enemy.isAlive()) { handleEnemyDefeat(); return; }
+        }
+
+        // Reduce player skill cooldowns at end of enemy turn
+        for (Skill s : player.getSkills()) s.reduceCooldown();
+        updateSkillButtons();
+
+        if (!player.isAlive()) {
+            log("💀 You have been defeated!");
+            disableSkillButtons();
+            return;
+        }
+
+        playerTurn = true;
+        log("Your turn! Choose your next skill.");
+    }
+
+    private void handleEnemyDefeat() {
+        log("🏆 You defeated " + enemy.getName() + "!");
+        disableSkillButtons();
+        player.levelUp(0.10, 0.10);
+
+        // Realm / Tutorial progression
+        Timer nextBattleTimer = new Timer(700, e -> {
+            ((Timer) e.getSource()).stop();
+            nextEnemyOrRealm();
+        });
+        nextBattleTimer.setRepeats(false);
+        nextBattleTimer.start();
+    }
+
+    private void nextEnemyOrRealm() {
+        switch (mode) {
+            case "Tutorial":
+                if (enemy instanceof Goblin) {
+                    enemy = new Cultist();
+                    clearBattleLog();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    log("🔥 New enemy: " + enemy.getName());
+                    return;
+                }
+                if (enemy instanceof Cultist) {
+                    mode = "Realm1";
+                    enemy = new SkySerpent();
+                    clearBattleLog();
+                    healPlayerFull();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    backBtn.setEnabled(true);
+                    return;
+                }
+            case "Realm1":
+                if (enemy instanceof SkySerpent) {
+                    enemy = new GeneralZephra();
+                    clearBattleLog();
+                    healPlayerFull();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    return;
+                }
+                if (enemy instanceof GeneralZephra) {
+                    mode = "Realm2";
+                    enemy = new MoltenImp();
+                    clearBattleLog();
+                    healPlayerFull();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    return;
+                }
+            case "Realm2":
+                if (enemy instanceof MoltenImp) {
+                    enemy = new GeneralVulkrag();
+                    clearBattleLog();
+                    healPlayerFull();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    return;
+                }
+                if (enemy instanceof GeneralVulkrag) {
+                    mode = "Realm3";
+                    enemy = new ShadowCreeper();
+                    clearBattleLog();
+                    healPlayerFull();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    return;
+                }
+            case "Realm3":
+                if (enemy instanceof ShadowCreeper) {
+                    enemy = new Vorthnar();
+                    clearBattleLog();
+                    healPlayerFull();
+                    updateLabels();
+                    enableSkillButtons();
+                    setupSkillButtons();
+                    return;
+                }
+                if (enemy instanceof Vorthnar) {
+                    JOptionPane.showMessageDialog(this,
+                            "🏆 CHAPTER III COMPLETE! You defeated Lord Vorthnar!",
+                            "Victory!", JOptionPane.INFORMATION_MESSAGE);
+                    disableSkillButtons();
+                    return;
+                }
+        }
+    }
+
+    private void healPlayerFull() {
+        player.setCurrentHealth(player.getMaxHealth());
+        log("💖 Player healed to full health!");
+    }
+
+    private void clearBattleLog() {
+        battleLog.setText("");
     }
 
     private void updateSkillButtons() {
         Skill[] skills = player.getSkills();
-
         skillBtn1.setText(skills[0].getName() + (skills[0].isOnCooldown() ? " (CD: " + skills[0].getCurrentCooldown() + ")" : ""));
         skillBtn2.setText(skills[1].getName() + (skills[1].isOnCooldown() ? " (CD: " + skills[1].getCurrentCooldown() + ")" : ""));
         skillBtn3.setText(skills[2].getName() + (skills[2].isOnCooldown() ? " (CD: " + skills[2].getCurrentCooldown() + ")" : ""));
     }
 
-    private void enemyTurn() {
-    // enemy's burn damage at start of turn;
-    if (!enemy.isAlive()) {
-        handleEnemyDefeat(enemy);
-        return;
-    }
-
-    // enemy's burn damage at start of turn;
-    if (burnTurnsRemaining > 0 && enemy.isAlive()) {
-        enemy.takeDamage(burnDamageToEnemy);
-        burnTurnsRemaining--;
-        log("🔥 Burn deals " + burnDamageToEnemy + " damage to " + enemy.getName() + " (" + burnTurnsRemaining + " turns remaining).");
-        updateHPLabels();
-        if (!enemy.isAlive()) {
-            handleEnemyDefeat(enemy);
-            return;
-        }
-    }
-
-    // Enemy’s turn
-    if (enemyBlinded) {
-       log("🌫️ " + enemy.getName() + " is blinded by Shadowveil and misses the attack!");
-       enemyBlinded = false;
-       lastDamageTakenByPlayer = 0;
-   } else if (playerDodgeActive) {
-       log("💨 You dodge " + enemy.getName() + "'s attack with WindWalk!");
-       playerDodgeActive = false;
-       lastDamageTakenByPlayer = 0;
-   } else if (playerShieldActive) {
-       log("🛡️ The attack is blocked by your Time Shield!");
-       playerShieldActive = false;
-       lastDamageTakenByPlayer = 0;
-   } else {
-       int damage = Math.max(0, enemy.getAtk() - player.getDef());
-       player.setCurrentHealth(player.getCurrentHealth() - damage);
-       lastDamageTakenByPlayer = damage;
-       log("👹 " + enemy.getName() + " attacks! You take " + damage + " damage.");
-       updateHPLabels();
-   }
-
-    // Chrono Slash delayed damage
-    if (delayedDamageToEnemy > 0 && enemy.isAlive()) {
-        log("💫 Chrono Slash triggers — " + delayedDamageToEnemy + " delayed damage!");
-        enemy.takeDamage(delayedDamageToEnemy);
-        delayedDamageToEnemy = 0;
-        updateHPLabels();
-
-        if (!enemy.isAlive()) {
-            handleEnemyDefeat(enemy);
-            return;
-        }
-    }
-
-    // Cooldown reductions
-    for (Skill skill : player.getSkills()) {
-        skill.reduceCooldown();
-        updateSkillButtons();
-    }
-
-    // End turn check
-    if (!player.isAlive()) {
-        log("💀 You were defeated...");
-        disableSkillButtons();
-        return;
-    }
-
-    // Player’s next turn
-    playerTurn = true;
-        log("Your turn! Choose your next skill.");
-    }
-    private void clearBattleLog() {
-        battleLog.setText("");
-    }
-
-
-   private void handleEnemyDefeat(Entity defeatedEnemy) {
-    log("🏆🏆🏆 You defeated the " + defeatedEnemy.getName() + "!");
-    disableSkillButtons();
-
-    Timer nextBattleTimer = new Timer(700, e -> {
-        ((Timer) e.getSource()).stop();
-
-        // TUTORIAL PHASE
-        if (mode.equals("Tutorial")) {
-            if (defeatedEnemy instanceof Goblin) {
-                log("You have been blessed by the Rift's energy! 💪");
-                player.levelUp(0.10, 0.10);
-                JOptionPane.showMessageDialog(this,
-                    "The Goblin collapses, dropping a strange sigil...\n" +
-                    "From the shadows, a hooded Cultist steps forward.",
-                    "Tutorial: Part II", JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                enemy = new Cultist();
-                clearBattleLog();
-                enemyNameLabel.setText(enemy.getName());
-                log("🔥 A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                updateSkillButtons();
-                return;
-            }
-
-            if (defeatedEnemy instanceof Cultist) {
-                JOptionPane.showMessageDialog(this,
-                    "The Cultist’s whisper fades: 'He... watches from the Rift...'\n\n" +
-                    "A surge of energy pulls you through — the Realms shift.",
-                    "End of Tutorial", JOptionPane.INFORMATION_MESSAGE);
-
-                mode = "Realm1";
-                JOptionPane.showMessageDialog(this,
-                    "🌩️ REALM I: AETHERIA 🌩️\n\n" +
-                    "You awaken beneath stormy skies — Aetheria.\n" +
-                    "Sky Serpents circle above, lightning dancing across their scales.",
-                    "Chapter I: The Rift Opens",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                enemy = new SkySerpent();   
-                updateSkillButtons();
-                clearBattleLog();
-                player.levelUp(0.10, 0.10);
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("You recall the expeprience form your fight with tutorial and use it to grow stronger! 💪");
-                log("⚔️ A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                enableBackButtonForRealDeal();
-                return;
-            }
-        }
-
-        // REALM I: AETHERIA
-        if (mode.equals("Realm1")) {
-            if (defeatedEnemy instanceof SkySerpent) {
-                JOptionPane.showMessageDialog(this,
-                    "The Sky Serpent bursts into feathers and lightning.\n" +
-                    "From the thunderclouds above descends General Zephra, Storm Mage of the Rift.",
-                    "⚡ Boss Battle: General Zephra ⚡",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                enemy = new GeneralZephra();
-                clearBattleLog();                
-                player.levelUp(0.15, 0.15);
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("You leveled up!💪");
-                log("⚡ A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-
-            if (defeatedEnemy instanceof GeneralZephra) {
-                JOptionPane.showMessageDialog(this,
-                    "Zephra’s thunderbird screeches as lightning fades.\n" +
-                    "A fiery rift tears open beneath you...",
-                    "🔥 Transition to Realm II: Ignara 🔥",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                mode = "Realm2";
-                enemy = new MoltenImp();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("🔥 Realm II: Ignara — molten chaos awaits!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-        }
-
-        // REALM II: IGNARA
-        if (mode.equals("Realm2")) {
-            if (defeatedEnemy instanceof MoltenImp) {
-                player.levelUp(0.10, 0.10);
-                log("LEVEL UP!!!");
-                JOptionPane.showMessageDialog(this,
-                    "The last Molten Imp bursts into flame...\n" +
-                    "From the magma rises General Vulkrag, the Infernal Commander!",
-                    "🔥 Boss Battle: General Vulkrag 🔥",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                enemy = new GeneralVulkrag();
-                clearBattleLog();
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("🔥 A new foe approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-
-            if (defeatedEnemy instanceof GeneralVulkrag) {
-                JOptionPane.showMessageDialog(this,
-                    "Vulkrag’s molten armor cracks apart.\n" +
-                    "Darkness seeps in from the edges of reality...",
-                    "🌑 Transition to Realm III: Noxterra 🌑",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                mode = "Realm3";
-                enemy = new ShadowCreeper();
-                healBetweenBattles();
-                player.levelUp(0.15, 0.15);
-                enemyNameLabel.setText(enemy.getName());
-                log("You noticable feel stronger after defeating a general! 💪");
-                log("🌑 Realm III: Noxterra — the shadows hunger...");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-        }
-
-        // REALM III: NOXTERRA
-        if (mode.equals("Realm3")) {
-            if (defeatedEnemy instanceof ShadowCreeper) {
-                JOptionPane.showMessageDialog(this,
-                    "The Shadow Creeper dissolves into mist...\n" +
-                    "A dark laughter echoes — the Rift Lord himself descends.",
-                    "💀 Final Boss: Lord Vorthnar 💀",
-                    JOptionPane.INFORMATION_MESSAGE);
-                    updateSkillButtons();
-
-                enemy = new Vorthnar();
-                clearBattleLog();
-                player.levelUp(0.20, 0.20);
-                healBetweenBattles();
-                enemyNameLabel.setText(enemy.getName());
-                log("You feel a surge of power course through you! 💪");
-                log("💀 The final boss approaches: " + enemy.getName() + "!");
-                updateHPLabels();
-                enableSkillButtons();
-                playerTurn = true;
-                return;
-            }
-
-            if (defeatedEnemy instanceof Vorthnar) {
-                JOptionPane.showMessageDialog(this,
-                    "Vorthnar collapses — time itself shatters, then reforms.\n\n" +
-                    "🏆 CHAPTER III COMPLETE 🏆\nYou have conquered the Realms!",
-                    "🎉 Victory!", JOptionPane.INFORMATION_MESSAGE);
-
-                log("🎉 You defeated Lord Vorthnar! Chapter III complete!");
-                disableSkillButtons();
-                return;
-            }
-        }
-    });
-    nextBattleTimer.setRepeats(false);
-    nextBattleTimer.start();
-}
-
-
-    private void enableBackButtonForRealDeal() {
-    backBtn.setEnabled(true);
-    for (ActionListener al : backBtn.getActionListeners()) backBtn.removeActionListener(al);
-
-    backBtn.addActionListener(e -> {
-        int confirm = JOptionPane.showConfirmDialog(this,
-            "Return to Main Menu? Your current progress will be lost.",
-            "Confirm Exit",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE);
-
-        if (confirm == JOptionPane.YES_OPTION) {
-            // 🔁 Change this depending on your main game structure
-            // Example if using a card layout in GameFrame:
-            JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-            if (topFrame instanceof GameFrame) {
-                ((GameFrame) topFrame).showMenu();
-            }
-        }
-    });
-}
-
-    private void healBetweenBattles() {
-        int healAmount = player.getMaxHealth(); // changed from 60 to player.getMaxHealth()
-        player.setCurrentHealth(Math.min(player.getMaxHealth(), player.getCurrentHealth() + healAmount));
-        updateHPLabels();
-        log("💖 You have recovered your vitality for the next battle!");
-    }
-
-    private void updateHPLabels() {
+    private void updateLabels() {
         playerHPLabel.setText("HP: " + player.getCurrentHealth() + "/" + player.getMaxHealth());
         enemyHPLabel.setText("HP: " + enemy.getCurrentHealth() + "/" + enemy.getMaxHealth());
-        updateLevelLabel(); // ensure level label stays current
-    }
-
-    private void updateLevelLabel() {
-        if (player == null) {
-            playerLevelLabel.setText("Level: --");
-            return;
-        }
-        try {
-            playerLevelLabel.setText("Level: " + player.getLevel());
-        } catch (Exception ex) {
-            // safe fallback if something goes wrong retrieving level
-            playerLevelLabel.setText("Level: --");
-            System.err.println("Warning: couldn't read player level: " + ex.getMessage());
-        }
+        playerLevelLabel.setText("Level: " + player.getLevel());
     }
 
     private void log(String msg) {
@@ -597,7 +371,13 @@ public class BattlePanel extends JPanel {
         skillBtn3.setEnabled(true);
     }
 
-    public JButton getBackButton() {
-        return backButton;
+    private void resetPlayerEffects() {
+        playerShieldActive = false;
+        playerDodgeActive = false;
+        enemyBlinded = false;
+        delayedDamageToEnemy = 0;
+        burnDamageToEnemy = 0;
+        burnTurnsRemaining = 0;
+        playerTurn = true;
     }
 }
