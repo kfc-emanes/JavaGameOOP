@@ -336,10 +336,10 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 player.levelUp(0.10, 0.10);
                 resetCooldownsOnKill();
+                healPlayerFull();
                 mode = "Realm2";
                 enemy = new MoltenImp();
                 updateLabels();
-                healPlayerFull();
                 refreshEnemyPanel();
                 clearBattleLog();
                 log("🏁 Realm 1 complete!");
@@ -376,10 +376,10 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 player.levelUp(0.10, 0.10);
                 resetCooldownsOnKill();
+                healPlayerFull();
                 mode = "Realm3";
                 enemy = new ShadowCreeper();
                 updateLabels();
-                healPlayerFull();
                 refreshEnemyPanel();
                 clearBattleLog();
                 log("🏁 Realm 2 complete!");
@@ -399,13 +399,13 @@ public class BattlePanel extends JPanel {
                     "💀 Final Boss: Lord Vorthnar 💀",
                     JOptionPane.INFORMATION_MESSAGE);
                 resetCooldownsOnKill();
+                player.levelUp(0.15, 0.15);
+                healPlayerFull();
                 enemy = new Vorthnar();
                 updateLabels();
-                player.levelUp(0.15, 0.15);
                 refreshEnemyPanel();
                 clearBattleLog();
                 log("🔥 New enemy: " + enemy.getName());
-                healPlayerFull();
                 log("You Feel a surge of power course through you!");
                 enableSkillButtons();
                 setupSkillButtons();
