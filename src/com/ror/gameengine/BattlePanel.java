@@ -36,7 +36,7 @@ public class BattlePanel extends JPanel {
         top.setBackground(Color.BLACK);
 
         Font nameFont = new Font("SansSerif", Font.BOLD, 16);
-        Font infoFont = new Font("SansSerif", Font.PLAIN, 14);
+        Font infoFont = new Font("Tahoma", Font.BOLD, 14);
         Color white = Color.WHITE;
 
         // --- Player panel (left) ---
@@ -77,12 +77,13 @@ public class BattlePanel extends JPanel {
 
 
     private void setupBottomButtons() {
-        JPanel bottom = new JPanel(new GridLayout(1, 4, 8, 8));
+        JPanel bottom = new JPanel();
+        bottom.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 12));
         bottom.setBackground(Color.DARK_GRAY);
 
-        skillBtn1 = new HoverButton("Skill 1");
-        skillBtn2 = new HoverButton("Skill 2");
-        skillBtn3 = new HoverButton("Skill 3");
+        skillBtn1 = new HoverButton("Chrono Slash");
+        skillBtn2 = new HoverButton("Time Shield");
+        skillBtn3 = new HoverButton("Reverse Flow");
         backBtn = new HoverButton("Back");
 
         Font btnFont = new Font("SansSerif", Font.PLAIN, 16);
@@ -91,7 +92,7 @@ public class BattlePanel extends JPanel {
         skillBtn3.setFont(btnFont);
         backBtn.setFont(btnFont);
 
-        backBtn.setEnabled(false); // unlock later after tutorial
+        backBtn.setEnabled(false);
         backBtn.addActionListener(e -> confirmBackToMenu());
 
         bottom.add(skillBtn1);
@@ -110,7 +111,7 @@ public class BattlePanel extends JPanel {
             parent.showMenu();
         }
     }
-
+    
     public void startBattle(Entity chosenPlayer) {
         this.player = chosenPlayer;
         this.enemy = new Goblin();
@@ -336,10 +337,10 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 player.levelUp(0.10, 0.10);
                 resetCooldownsOnKill();
+                healPlayerFull();
                 mode = "Realm2";
                 enemy = new MoltenImp();
                 updateLabels();
-                healPlayerFull();
                 refreshEnemyPanel();
                 clearBattleLog();
                 log("🏁 Realm 1 complete!");
@@ -376,10 +377,10 @@ public class BattlePanel extends JPanel {
                     JOptionPane.INFORMATION_MESSAGE);
                 player.levelUp(0.10, 0.10);
                 resetCooldownsOnKill();
+                healPlayerFull();
                 mode = "Realm3";
                 enemy = new ShadowCreeper();
                 updateLabels();
-                healPlayerFull();
                 refreshEnemyPanel();
                 clearBattleLog();
                 log("🏁 Realm 2 complete!");
@@ -399,13 +400,13 @@ public class BattlePanel extends JPanel {
                     "💀 Final Boss: Lord Vorthnar 💀",
                     JOptionPane.INFORMATION_MESSAGE);
                 resetCooldownsOnKill();
+                player.levelUp(0.15, 0.15);
+                healPlayerFull();
                 enemy = new Vorthnar();
                 updateLabels();
-                player.levelUp(0.15, 0.15);
                 refreshEnemyPanel();
                 clearBattleLog();
                 log("🔥 New enemy: " + enemy.getName());
-                healPlayerFull();
                 log("You Feel a surge of power course through you!");
                 enableSkillButtons();
                 setupSkillButtons();

@@ -17,7 +17,7 @@ public class Tharn extends Entity {
             }
         };
 
-        Skill rockskin = new Skill("Rockskin", 0, 4) {
+        Skill rockskin = new Skill("Rockskin", 0, 3) {
             @Override
             public void apply(Entity user, Entity target, BattlePanel panel) {
                 int heal = (int) Math.ceil((user.getMaxHealth() - user.getCurrentHealth()) * 0.4);
