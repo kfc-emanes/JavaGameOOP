@@ -16,7 +16,7 @@ public class Nyx extends Entity {
             }
         };
 
-        Skill nightPoison = new Skill("Night Poison", 10, 2) { // applies poison + slow
+        Skill nightPoison = new Skill("Night Poison", 30, 2) { // applies poison + slow
             @Override
             public void apply(Entity user, Entity target, BattlePanel panel) {
                 target.takeDamage(power); // simple poison damage for now
