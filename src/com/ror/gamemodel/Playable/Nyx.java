@@ -25,7 +25,7 @@ public class Nyx extends Entity {
             }
         };
 
-        Skill darkVeil = new Skill("Dark Veil", 0, 2) { // blind / evade
+        Skill darkVeil = new Skill("Dark Veil", 0, 1) { // blind / evade
             @Override
             public void apply(Entity user, Entity target, BattlePanel panel) {
                 target.setBlinded(true); // you'll need to implement setBlinded in Entity

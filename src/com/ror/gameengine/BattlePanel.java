@@ -26,7 +26,8 @@ public class BattlePanel extends JPanel {
     int burnTurnsRemaining = 0;
 
     public String mode = "Tutorial";
-    public BattlePanel(GameFrame parent) {;
+    public BattlePanel(GameFrame parent) {
+        this.parent = parent;
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
@@ -87,7 +88,7 @@ public class BattlePanel extends JPanel {
     }
 
 
-    private void setupBottomPanel() {
+        private void setupBottomPanel() {
         // ensure buttons exist before configuring them
         skillBtn1 = new HoverButton("Skill 1");
         skillBtn2 = new HoverButton("Skill 2");
@@ -148,6 +149,7 @@ public class BattlePanel extends JPanel {
         playerBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 64));
 
         // buttons row (centered, black background)
+        // buttons row (centered, black background)
         JPanel buttonsPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 24, 8));
         buttonsPanel.setBackground(Color.BLACK);
         buttonsPanel.setOpaque(true);
@@ -158,16 +160,21 @@ public class BattlePanel extends JPanel {
         skillBtn3.setFont(btnFont);
         backBtn.setFont(btnFont);
 
-        // optionally give buttons a thin white border to match screenshot
+        // give buttons a thin white border
         Border btnBorder = BorderFactory.createLineBorder(Color.WHITE, 2);
         skillBtn1.setBorder(btnBorder);
         skillBtn2.setBorder(btnBorder);
         skillBtn3.setBorder(btnBorder);
         backBtn.setBorder(btnBorder);
 
+        // Add action listener for back button
+        backBtn.addActionListener(e -> confirmBackToMenu());
+
+        // Add buttons to the panel
         buttonsPanel.add(skillBtn1);
         buttonsPanel.add(skillBtn2);
         buttonsPanel.add(skillBtn3);
+        buttonsPanel.add(backBtn); // <-- added here
 
         bottom.add(Box.createVerticalStrut(8));
         bottom.add(playerBox);

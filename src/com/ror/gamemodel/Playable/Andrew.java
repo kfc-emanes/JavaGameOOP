@@ -18,7 +18,7 @@ public class Andrew extends Entity {
             }
         };
 
-        Skill timeShield = new Skill("Time Shield", 0, 3) {
+        Skill timeShield = new Skill("Time Shield", 0, 2) {
             @Override
             public void apply(Entity user, Entity target, BattlePanel panel) {
                 user.setShieldActive(true);
@@ -26,7 +26,7 @@ public class Andrew extends Entity {
             }
         };
 
-        Skill reverseFlow = new Skill("Reverse Flow", 0, 3) {
+        Skill reverseFlow = new Skill("Reverse Flow", 0, 2) {
             @Override
             public void apply(Entity user, Entity target, BattlePanel panel) {
                 int heal = (int)Math.ceil((user.getMaxHealth() - user.getCurrentHealth()) * 0.5);

@@ -26,7 +26,7 @@ public class SkyMage extends Entity {
             }
         };
 
-        Skill windwalk = new Skill("Windwalk", 0, 2) {
+        Skill windwalk = new Skill("Windwalk", 0, 1) {
             @Override
             public void apply(Entity user, Entity target, BattlePanel panel) {
                 user.setDodgeActive(true);
