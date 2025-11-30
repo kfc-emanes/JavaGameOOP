@@ -1,26 +1,26 @@
 package com.ror.gameengine;
-
 import javax.swing.*;
+import com.ror.gameutil.HoverButton;
 import java.awt.*;
 
 public class MenuPanel extends JPanel {
-    private GameFrame parent;  // Reference to the main frame
-    private JButton playButton;
+    private GameFrame parent;
+    private HoverButton playButton;
 
     public MenuPanel(GameFrame parent) {
-        this.parent = parent; // Store the reference
+        this.parent = parent;
 
         setLayout(new BorderLayout());
         setBackground(Color.BLACK);
 
         JLabel title = new JLabel("Realms of Riftborne", SwingConstants.CENTER);
-        title.setFont(new Font("Century Gothic", Font.BOLD, 64));
+        title.setFont(new Font("Palatino Linotype", Font.BOLD, 64));
         title.setForeground(Color.WHITE);
 
-        playButton = new JButton("Start Game");
-        JButton exitButton = new JButton("Exit");
+        playButton = new HoverButton("Start Game");
+        HoverButton exitButton = new HoverButton("Exit");
 
-        playButton.addActionListener(e -> parent.showSelect());  // Go to select screen
+        playButton.addActionListener(e -> parent.showSelect());
         exitButton.addActionListener(e -> System.exit(0));
 
         JPanel buttonPanel = new JPanel();

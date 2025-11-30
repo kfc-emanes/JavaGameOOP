@@ -1,20 +1,18 @@
 package com.ror.gameengine;
 
-//import com.ror.gamemodel.*;
 import javax.swing.*;
+
+import com.ror.gameutil.HoverButton;
+
 import java.awt.*;
 
 public class CharacterSelectPanel extends JPanel {
-    private JButton backButton;
+    private HoverButton backButton;
     private JButton andrewButton;
     private JButton flameWarriorButton;
     private JButton skyMageButton;
     private JButton NyxButton;    
     private JButton TharnButton;  
-    //private JButton slot2Button;
-    //private JButton slot3Button;
-    //private JButton slot4Button;
-    //private JButton slot5Button;
 
     private GameFrame parent; // reference to GameFrame
 
@@ -45,7 +43,7 @@ public class CharacterSelectPanel extends JPanel {
         characterPanel.add(TharnButton);
 
         //Back Button
-        backButton = new JButton("Back to Menu >>>");
+        backButton = new HoverButton("Back to Menu >>>");
 
         //Layout
         add(title, BorderLayout.NORTH);

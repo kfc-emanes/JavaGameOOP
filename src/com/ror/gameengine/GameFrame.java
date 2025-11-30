@@ -5,9 +5,9 @@ import java.awt.*;
 import com.ror.gamemodel.*;
 
 public class GameFrame extends JFrame {
-    private MenuPanel menuPanel;
-    private CharacterSelectPanel selectPanel;
-    private BattlePanel battlePanel;
+    public MenuPanel menuPanel;
+    public CharacterSelectPanel selectPanel;
+    public BattlePanel battlePanel;
 
     public GameFrame() {
         setTitle("Realms of Riftborne");

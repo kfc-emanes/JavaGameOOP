@@ -1,6 +1,8 @@
 package com.ror.gameengine;
 
 import com.ror.gamemodel.*;
+import com.ror.gameutil.HoverButton;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -10,7 +12,7 @@ public class BattlePanel extends JPanel {
     public GameFrame parent;
     public JButton backButton;
     public JTextArea battleLog;
-    public JButton skillBtn1, skillBtn2, skillBtn3, backBtn;
+    public HoverButton skillBtn1, skillBtn2, skillBtn3, backBtn;
     public JLabel playerHPLabel, enemyHPLabel, playerNameLabel, enemyNameLabel;
     public JLabel playerLevelLabel;
     public int healAmount;
@@ -84,12 +86,11 @@ public class BattlePanel extends JPanel {
         JPanel bottom = new JPanel(new GridLayout(1, 4, 8, 8));
         bottom.setBackground(Color.DARK_GRAY);
 
-        skillBtn1 = new JButton("Skill 1");
-        skillBtn2 = new JButton("Skill 2");
-        skillBtn3 = new JButton("Skill 3");
-        backBtn = new JButton("Back");
+        skillBtn1 = new HoverButton("Skill 1");
+        skillBtn2 = new HoverButton("Skill 2");
+        skillBtn3 = new HoverButton("Skill 3");
+        backBtn = new HoverButton("Back");
 
-        // increase button font size
         Font btnFont = new Font("SansSerif", Font.PLAIN, 16);
         skillBtn1.setFont(btnFont);
         skillBtn2.setFont(btnFont);
@@ -114,7 +115,7 @@ public class BattlePanel extends JPanel {
         bottom.add(backBtn);
 
         add(bottom, BorderLayout.SOUTH);
-        backBtn.setEnabled(false);
+        backBtn.setEnabled(true);
 
     }
     
@@ -154,11 +155,9 @@ public class BattlePanel extends JPanel {
                     "[!] Defeating a miniboss will allow you to proceed to the next realm.\n" +
                     "[!] You restore " + healAmount + " health after every battle.\n" +
                     "[!] Your skills are your main method of attack, and certain skills will go on cooldown for a set amount of turns.\n" +
-                    "[!] The Back button on the bottom right is disabled until AFTER the Tutorial!\n" +
                     "Pick a skill to begin your turn!",
                     "Tutorial", JOptionPane.INFORMATION_MESSAGE);
         
-                    log("\nChoose a skill to begin your turn.");
     
 
         log("\nChoose a skill to begin your turn.");
