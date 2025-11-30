@@ -1,39 +1,47 @@
 package com.ror.gamemodel.Playable;
 
-import com.ror.gameengine.BattlePanel;
-import com.ror.gamemodel.*;
+import com.ror.gamemodel.Entity;
+import com.ror.gamemodel.Skill;
+import com.ror.gameutil.BattleView;
 
 public class SkyMage extends Entity {
 
     public SkyMage() {
-        super("Flashey the Windwhisperer", 120, 120, 25, 14);
+        super("Sky Mage", 100, 25);
+        setupSkills();
+    }
 
-        Skill tempestGale = new Skill("Tempest Gale", 22, 2) {
+    @Override
+    protected void setupSkills() {
+        // Skill 1: Tempest Gale
+        addSkill(new Skill("Tempest Gale", "Slashes enemies with air blades.", 2) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                int damage = power + user.getAtk();
-                target.takeDamage(damage);
-                panel.log(user.getName() + " unleashes Tempest Gale for " + damage + " damage!");
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 5); // scales with atk
             }
-        };
+        });
 
-        Skill featherBarrier = new Skill("Feather Barrier", 0, 3) {
+        // Skill 2: Feather Strike
+        addSkill(new Skill("Feather Strike", "High damage, high precision move.", 3) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                int heal = (int) Math.ceil((user.getMaxHealth() - user.getCurrentHealth()) * 0.4);
-                user.setCurrentHealth(Math.min(user.getMaxHealth(), user.getCurrentHealth() + heal));
-                panel.log(user.getName() + " restores " + heal + " HP with Feather Barrier!");
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 15);
             }
-        };
+        });
 
-        Skill windwalk = new Skill("Windwalk", 0, 1) {
+        // Skill 3: Windwalk
+        addSkill(new Skill("Windwalk", "Dodges next attack completely.", 4) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                user.setDodgeActive(true);
-                panel.log(user.getName() + " activates Windwalk! Will dodge the next attack.");
+            public void apply(Entity user, Entity target, BattleView view) {
+                user.setDodgeActive(true); // uses Entity’s dodge logic
             }
-        };
+        });
+    }
 
-        setSkills(new Skill[]{tempestGale, featherBarrier, windwalk});
+    @Override
+    public void levelUp() {
+        maxHealth += (int)(maxHealth * 0.10); // lighter growth
+        atk += (int)(atk * 0.20);             // stronger attack scaling
+        currentHealth = maxHealth;
     }
 }

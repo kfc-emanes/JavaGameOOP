@@ -2,6 +2,13 @@ package com.ror.gamemodel;
 
 import java.util.*;
 
+import com.ror.gamemodel.Enemy.GeneralVulkrag;
+import com.ror.gamemodel.Enemy.GeneralZephra;
+import com.ror.gamemodel.Enemy.MoltenImp;
+import com.ror.gamemodel.Enemy.Vorthnar;
+import com.ror.gamemodel.Enemy.ShadowCreeper;
+import com.ror.gamemodel.Enemy.SkySerpent;
+
 public class WorldManager {
     private final LinkedHashMap<String, Queue<Entity>> worlds = new LinkedHashMap<>();
     private Iterator<String> worldIterator;
@@ -39,7 +46,6 @@ public class WorldManager {
         Queue<Entity> noxterra = new LinkedList<>();
         noxterra.add(new ShadowCreeper());
         noxterra.add(new ShadowCreeper());
-        noxterra.add(new ShadowWarlord()); // corrected name
         worlds.put("Noxtperra", noxterra);
     }
 

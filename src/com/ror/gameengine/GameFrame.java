@@ -2,7 +2,8 @@ package com.ror.gameengine;
 
 import javax.swing.*;
 import java.awt.*;
-import com.ror.gamemodel.*;
+import com.ror.gamemodel.Entity;
+import com.ror.gamemodel.WorldManager;
 
 public class GameFrame extends JFrame {
     public MenuPanel menuPanel;

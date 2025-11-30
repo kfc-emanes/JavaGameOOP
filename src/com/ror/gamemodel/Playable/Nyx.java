@@ -1,38 +1,47 @@
 package com.ror.gamemodel.Playable;
 
-import com.ror.gameengine.BattlePanel;
-import com.ror.gamemodel.*;
+import com.ror.gamemodel.Entity;
+import com.ror.gamemodel.Skill;
+import com.ror.gameutil.BattleView;
 
 public class Nyx extends Entity {
+
     public Nyx() {
-        super("Nyx Shadowveil", 95, 95, 28, 4);
+        super("Nyx", 110, 30);
+        setupSkills();
+    }
 
-        Skill shadowBlink = new Skill("Shadow Blink", 35, 2) { // teleport + strong hit
+    @Override
+    protected void setupSkills() {
+        // Skill 1: Shadowblink
+        addSkill(new Skill("Shadowblink", "Normal teleport attack.", 2) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                int damage = power + user.getAtk();
-                target.takeDamage(damage);
-                panel.log(user.getName() + " teleports and strikes " + target.getName() + " for " + damage + " damage!");
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 10);
             }
-        };
+        });
 
-        Skill nightPoison = new Skill("Night Poison", 30, 2) { // applies poison + slow
+        // Skill 2: Night's Cowl
+        addSkill(new Skill("Night's Cowl", "Surprise attack dealing big damage.", 4) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                target.takeDamage(power); // simple poison damage for now
-                panel.log(user.getName() + " poisons " + target.getName() + " for " + power + " damage!");
-                // Here you could also add status effects like slow if you implement them
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 25);
             }
-        };
+        });
 
-        Skill darkVeil = new Skill("Dark Veil", 0, 1) { // blind / evade
+        // Skill 3: Dark Veil
+        addSkill(new Skill("Dark Veil", "Blinds enemies for next attack.", 3) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                target.setBlinded(true); // you'll need to implement setBlinded in Entity
-                panel.log(user.getName() + " casts Dark Veil! " + target.getName() + " is blinded!");
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.setBlinded(true); // uses Entity’s blind logic
             }
-        };
+        });
+    }
 
-        setSkills(new Skill[]{shadowBlink, nightPoison, darkVeil});
+    @Override
+    public void levelUp() {
+        maxHealth += (int)(maxHealth * 0.10); // Nyx is agile, not tanky
+        atk += (int)(atk * 0.20);             // higher attack growth
+        currentHealth = maxHealth;
     }
 }

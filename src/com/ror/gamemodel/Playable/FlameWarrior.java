@@ -1,37 +1,47 @@
 package com.ror.gamemodel.Playable;
 
-import com.ror.gameengine.BattlePanel;
-import com.ror.gamemodel.*;
+import com.ror.gamemodel.Entity;
+import com.ror.gamemodel.Skill;
+import com.ror.gameutil.BattleView;
 
 public class FlameWarrior extends Entity {
 
     public FlameWarrior() {
-        super("Drax the Flamebound", 160, 160, 30, 18);
-        
-        //blud dosen't need unique skills to defeat the boss
-        Skill infernoStrike = new Skill("Inferno Strike", 20, 2) {
-            @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                int damage = this.getPower() + user.getAtk();
-                target.takeDamage(damage);
-                panel.log(user.getName() + " hits " + target.getName() + " with Inferno Strike for " + damage + " damage!");
-            }
-        };
+        super("Flame Warrior", 150, 40);
+        setupSkills();
+    }
 
-        Skill flameRoar = new Skill("Flame Roar", 0, 3) {
+    @Override
+    protected void setupSkills() {
+        // Skill 1: Inferno Strike
+        addSkill(new Skill("Inferno Strike", "Deals heavy fire damage.", 1) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                panel.log(user.getName() + " uses Flame Roar to intimidate the enemy!");
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 20); // scales with atk
             }
-        };
+        });
 
-        Skill moltenWall = new Skill("Molten Wall", 0, 4) {
+        // Skill 2: Flame Roar
+        addSkill(new Skill("Flame Roar", "Damages the enemy with a fiery shout.", 0) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                panel.log(user.getName() + " braces behind Molten Wall!");
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 10);
             }
-        };
+        });
 
-        setSkills(new Skill[]{infernoStrike, flameRoar, moltenWall});
+        // Skill 3: Molten Fist
+        addSkill(new Skill("Molten Fist", "A powerful molten punch.", 2) {
+            @Override
+            public void apply(Entity user, Entity target, BattleView view) {
+                target.takeDamage(user.getAtk() + 25);
+            }
+        });
+    }
+
+    @Override
+    public void levelUp() {
+        maxHealth += (int)(maxHealth * 0.20); // Flame Warrior grows tankier
+        atk += (int)(atk * 0.10);             // modest attack growth
+        currentHealth = maxHealth;
     }
 }

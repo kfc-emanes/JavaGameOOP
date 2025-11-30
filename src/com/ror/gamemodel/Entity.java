@@ -1,144 +1,148 @@
 package com.ror.gamemodel;
 
-import com.ror.gameengine.BattlePanel;
+import java.util.List;
+import java.util.ArrayList;
 
+/**
+ * Base class for all combat participants (Players and Enemies).
+ */
 public abstract class Entity {
+    
+    // --- Fields ---
     public String name;
-    public int maxHealth;
-    public int currHealth;
-    public int atk;
-    public int def;
-    public Skill[] skills;
-    public int currentCooldown;
-    public int level = 0;
+    public int maxHealth; // Protected visibility for player access
+    public int currentHealth; // Protected visibility for player access
+    public int atk;         // Attack power, accessed via getAtk()
+    public int def;         // Defense value, accessed via getDef()
+    public int level = 1; // Default level 1
+    protected int speed;    // Speed stat, can influence turn order
+    
+    // Status Effects
+    public boolean isShieldActive = false;
+    public boolean isDodgeActive = false;
+    public boolean isBlinded = false;
+    
+    // Skills are stored as a List, which caused the mismatch error
+    public List<Skill> skills = new ArrayList<>(); 
 
-    protected boolean shieldActive = false; // track shield status
-    private boolean dodgeActive = false;
-    private boolean blinded = false;
-
-    public Entity(String name, int maxHealth, int currHealth, int atk, int def) {
+    // =================================================================
+    // PRIMARY (CANONICAL) CONSTRUCTOR - All others chain here.
+    // =================================================================
+    public Entity(String name, int maxHealth, int atk, int def, int speed) {
         this.name = name;
         this.maxHealth = maxHealth;
-        this.currHealth = currHealth;
+        this.currentHealth = maxHealth;
         this.atk = atk;
         this.def = def;
-        this.skills = new Skill[3];
+
+    }
+    
+    // CONVENIENCE CONSTRUCTOR 1 (4 Arguments)
+    public Entity(String name, int maxHealth, int atk, int def) {
+        // Chains to primary constructor with default speed (e.g., 10)
+        this(name, maxHealth, atk, def, 10); 
+    }
+    
+    // CONVENIENCE CONSTRUCTOR 2 (3 Arguments)
+    public Entity(String name, int maxHealth, int atk) {
+        // Chains to 4-argument constructor with default defense (e.g., 5)
+        this(name, maxHealth, atk, 5); 
+    }
+    
+    // --- Abstract Method (Must be implemented by subclasses) ---
+    protected abstract void setupSkills();
+    
+    // --- LEVEL UP LOGIC (Non-Abstract and Overridable) ---
+
+    /**
+     * Base implementation of levelUp. Enemies will use this version, which does nothing.
+     * Player classes will OVERRIDE this method to implement custom stat increases.
+     */
+    public void levelUp() {
+        // Default (Enemy) behavior: Do nothing.
+    }
+    
+    /**
+     * Method used externally (e.g., by the GameManager) to trigger leveling and apply modifiers.
+     * This method should only be called on Player entities.
+     * @param atkModifier The ratio by which to increase attack.
+     * @param defModifier The ratio by which to increase defense.
+     */
+    public void applyLevelUpModifiers(double atkModifier, double defModifier) {
+        // 1. Call the subclass's specific levelUp logic (e.g., Player's override)
+        levelUp(); 
+        
+        // 2. Apply global modifier logic, if necessary
+        this.atk = (int)(this.atk * (1 + atkModifier));
+        this.def = (int)(this.def * (1 + defModifier));
+        this.maxHealth = (int)(this.maxHealth * (1 + atkModifier)); // Example: Health scales with Attack
+        this.currentHealth = this.maxHealth; // Restore health on level up
+        
+        // 3. Increment the level counter
+        this.level++;
     }
 
+    // --- CORE COMBAT METHODS ---
+    
+    public void takeDamage(int damage) {
+        this.currentHealth = Math.max(0, this.currentHealth - damage);
+    }
+    
+    public void heal(int amount) {
+        this.currentHealth = Math.min(this.maxHealth, this.currentHealth + amount);
+    }
+    
+    public boolean isAlive() {
+        return currentHealth > 0;
+    }
+
+    protected void addSkill(Skill skill) {
+        this.skills.add(skill);
+    }
+
+    // --- GETTERS ---
+    
     public String getName() { return name; }
     public int getMaxHealth() { return maxHealth; }
-    public int getCurrentHealth() { return currHealth; }
+    public int getCurrentHealth() { return currentHealth; }
     public int getAtk() { return atk; }
-    public int getDef() { return def; }
-    public Skill[] getSkills() { return skills; }
-    public int getLevel() { return level; }
+    public int getDef() { return def; } 
+    public int getLevel() { return level; } 
 
-    public void setCurrentHealth(int health) {
-        this.currHealth = Math.max(0, Math.min(health, maxHealth));
+    // Returns a copy of the List for safety
+    public List<Skill> getSkills() { return new ArrayList<>(skills); } 
+
+    public boolean isShieldActive() { return isShieldActive; }
+    public boolean isDodgeActive() { return isDodgeActive; }
+    public boolean isBlinded() { return isBlinded; }
+
+    // --- SETTERS ---
+    
+    public void setCurrentHealth(int currentHealth) { 
+        this.currentHealth = Math.min(currentHealth, maxHealth);
     }
 
-    public void takeDamage(int dmg) {
-        int actualDamage = Math.max(0, dmg - def);
-        if (shieldActive) {
-            actualDamage = 0; // shield blocks damage
-            shieldActive = false; // shield consumed
-            System.out.println(name + "'s shield blocked the attack!");
-        }
-        currHealth -= actualDamage;
-        if (currHealth < 0) currHealth = 0;
-        System.out.println(name + " took " + actualDamage + " damage! " + name + " has " + currHealth + " HP left.");
+    public void setShieldActive(boolean status) { 
+        this.isShieldActive = status;
     }
 
-    public void attack(Entity target) {
-        System.out.println(name + " attacks " + target.getName() + " for " + atk + " damage!");
-        target.takeDamage(atk);
+    public void setDodgeActive(boolean status) { 
+        this.isDodgeActive = status;
     }
 
-    public boolean isAlive() {
-        return currHealth > 0;
+    public void setBlinded(boolean status) {
+        this.isBlinded = status;
+    }
+    
+    public void activateShield() {
+        setShieldActive(true);
     }
 
-    public void setSkill(int slot, Skill skill) {
-        if (slot >= 0 && slot < skills.length) {
-            skills[slot] = skill;
-        } else {
-            throw new IllegalArgumentException("Invalid skill slot: " + slot);
-        }
+     public void setAtk(int newAtk) { 
+        this.atk = newAtk;
     }
 
-    public void useSkill(int slot, Entity target, BattlePanel panel) {
-        Skill skill = skills[slot];
-        if (skill == null) return;
-
-        if (!skill.isOnCooldown()) {
-            skill.apply(this, target, panel); // <-- 'this' is the user
-            skill.triggerCooldown();
-        }
+    public void setDef(int newDef) { 
+        this.def = newDef;
     }
-
-
-
-
-    public Skill getSkillByName(String skillName) {
-        for (Skill skill : skills) {
-            if (skill.getName().equalsIgnoreCase(skillName)) return skill;
-        }
-        return null;
-    }
-
-    public void setSkills(Skill[] skills) {
-        this.skills = skills;
-    }
-
-    public void levelUp(double hpPercent, double atkPercent) {
-        int hpIncrease = (int) Math.round(maxHealth * hpPercent);
-        int atkIncrease = (int) Math.round(atk * atkPercent);
-
-        maxHealth += hpIncrease;
-        currHealth += hpIncrease;
-        atk += atkIncrease;
-
-        if (skills != null) {
-            for (Skill skill : skills) {
-                if (skill != null) skill.resetCooldown();
-            }
-        }
-        level++;
-        System.out.println(name + " leveled up! Max HP +" + hpIncrease + ", ATK +" + atkIncrease);
-        System.out.println("All skill cooldowns have been reset!");
-    }
-
-    // LOOK OVER HERE -- NEW shield setter & getter for characters, this one's for andrew
-    public void setShieldActive(boolean active) {
-        this.shieldActive = active;
-        if (active) System.out.println(name + " activates a shield!");
-    }
-
-    public boolean isShieldActive() {
-        return shieldActive;
-    }
-
-    //for Flashey(windwalk)
-    public void setDodgeActive(boolean active) {
-        this.dodgeActive = active;
-    }
-
-    public boolean isDodgeActive() {
-        return dodgeActive;
-    }
-
-    //for Nyx(dark veil)
-    public boolean isBlinded() {
-        return blinded;
-    }
-
-    public void setBlinded(boolean blinded) {
-        this.blinded = blinded;
-        if (blinded) {
-            System.out.println(name + " is now blinded!");
-        } else {
-            System.out.println(name + " is no longer blinded!");
-        }
-    }
-
 }

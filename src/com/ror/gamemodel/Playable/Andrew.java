@@ -1,41 +1,62 @@
 package com.ror.gamemodel.Playable;
 
-import com.ror.gameengine.BattlePanel;
-import com.ror.gamemodel.*;
+import com.ror.gamemodel.Entity;
+import com.ror.gamemodel.Skill;
+import com.ror.gameutil.BattleView;
+import com.ror.gameutil.BattleUtility;
+import java.util.ArrayList;
 
+/**
+ * Andrew, the starting playable character. Balanced stats.
+ */
 public class Andrew extends Entity {
 
     public Andrew() {
-        super("Andrew the Timeblade", 115, 115, 18, 5);
+        // Use the 5-argument canonical constructor: (name, maxHealth, attack, defense, speed)
+        super("Andrew", 100, 20, 10, 10); 
+        setupSkills();
+    }
 
-        // Define skills as anonymous inner classes
-        Skill chronoSlash = new Skill("Chrono Slash", 25, 1) {
+    @Override
+    protected void setupSkills() {
+        this.skills = new ArrayList<>();
+
+        // Skill 1: Punch (Basic Attack)
+        this.skills.add(new Skill("ChronoSlash", "A time slash.", 0) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                int damage = power + user.getAtk();
+            public void apply(Entity user, Entity target, BattleView view) {
+                // target is defined ONLY within this apply method's scope
+                int calculatedAttack = (int)(user.getAtk() * 1.0);
+                int damage = BattleUtility.calculateDamage(calculatedAttack, target.getDef());
                 target.takeDamage(damage);
-                panel.log(user.getName() + " hits " + target.getName() + " for " + damage + " damage!");
+                view.logMessage("👊 " + user.getName() + " punches " + target.getName() + ", dealing " + damage + " damage.");
             }
-        };
+        });
 
-        Skill timeShield = new Skill("Time Shield", 0, 2) {
+        // Skill 2: Guard (Defense Buff)
+        this.skills.add(new Skill("Guard", "Raises defense for one turn.", 1) {
             @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
+            public void apply(Entity user, Entity target, BattleView view) {
                 user.setShieldActive(true);
-                panel.log(user.getName() + " activates Time Shield!");
+                view.logMessage("🛡️ " + user.getName() + " enters a defensive stance.");
             }
-        };
-
-        Skill reverseFlow = new Skill("Reverse Flow", 0, 2) {
-            @Override
-            public void apply(Entity user, Entity target, BattlePanel panel) {
-                int heal = (int)Math.ceil((user.getMaxHealth() - user.getCurrentHealth()) * 0.5);
-                user.setCurrentHealth(Math.min(user.getMaxHealth(), user.getCurrentHealth() + heal));
-                panel.log(user.getName() + " heals for " + heal + " HP!");
-            }
-        };
-
-        // Assign the skills to the entity
-        setSkills(new Skill[] { chronoSlash, timeShield, reverseFlow });
+        });
+    }
+    
+    /**
+     * Overrides the empty levelUp() in Entity to provide custom stat increases.
+     */
+    @Override
+    public void levelUp() {
+        // Use the public setters (setAtk, setDef) from Entity instead of private field access.
+        int newAtk = getAtk() + 2;
+        int newDef = getDef() + 1;
+        
+        setAtk(newAtk);
+        setDef(newDef);
+        this.maxHealth += 5;
+        this.currentHealth = this.maxHealth;
+        
+        // This section no longer contains any reference to 'target', resolving the error.
     }
 }

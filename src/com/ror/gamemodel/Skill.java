@@ -1,30 +1,40 @@
 package com.ror.gamemodel;
 
-import com.ror.gameengine.BattlePanel;
+import com.ror.gameutil.BattleView;
 
 public abstract class Skill {
-    protected String name;
-    protected int power;
-    protected int cooldown;
-    protected int currentCooldown;
+    private final String name;
+    private final String description;
+    private final int maxCooldown;
+    private int currentCooldown;
 
-    public Skill(String name, int power, int cooldown) {
+    public Skill(String name, String description, int maxCooldown) {
         this.name = name;
-        this.power = power;
-        this.cooldown = cooldown;
+        this.description = description;
+        this.maxCooldown = maxCooldown;
         this.currentCooldown = 0;
     }
 
+    public abstract void apply(Entity user, Entity target, BattleView view);
+
+    // --- Cooldown Logic ---
+    public void triggerCooldown() {
+        this.currentCooldown = this.maxCooldown;
+    }
+
+    public void reduceCooldown() {
+        if (this.currentCooldown > 0) {
+            this.currentCooldown--;
+        }
+    }
+
+    public void resetCooldown() {
+        this.currentCooldown = 0;
+    }
+    
+    // Getters 
     public String getName() { return name; }
-    public int getPower() { return power; }
-    public int getCooldown() { return cooldown; }
-    public int getCurrentCooldown() { return currentCooldown; }
-
+    public String getDescription() { return description; }
     public boolean isOnCooldown() { return currentCooldown > 0; }
-    public void triggerCooldown() { currentCooldown = cooldown; }
-    public void reduceCooldown() { if(currentCooldown>0) currentCooldown--; }
-    public void resetCooldown() { currentCooldown = 0; }
-
-    // Logic only, no UI
-    public abstract void apply(Entity user, Entity target, BattlePanel panel);
+    public int getCurrentCooldown() { return currentCooldown; }
 }
