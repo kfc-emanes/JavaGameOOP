@@ -14,7 +14,7 @@ public class Nyx extends Entity {
     @Override
     protected void setupSkills() {
         // Skill 1: Shadowblink
-        addSkill(new Skill("Shadowblink", "Normal teleport attack.", 2) {
+        addSkill(new Skill("Shadowblink", "Normal teleport attack.", 2, 40) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 10);
@@ -22,7 +22,7 @@ public class Nyx extends Entity {
         });
 
         // Skill 2: Night's Cowl
-        addSkill(new Skill("Night's Cowl", "Surprise attack dealing big damage.", 4) {
+        addSkill(new Skill("Night's Cowl", "Surprise attack dealing big damage.", 4, 30) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 25);
@@ -30,7 +30,7 @@ public class Nyx extends Entity {
         });
 
         // Skill 3: Dark Veil
-        addSkill(new Skill("Dark Veil", "Blinds enemies for next attack.", 3) {
+        addSkill(new Skill("Dark Veil", "Blinds enemies for next attack.", 3, 0) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.setBlinded(true); // uses Entity’s blind logic

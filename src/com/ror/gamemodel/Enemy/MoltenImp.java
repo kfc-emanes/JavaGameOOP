@@ -13,7 +13,7 @@ public class MoltenImp extends Entity {
 
     @Override
     protected void setupSkills() {
-        addSkill(new Skill("Fire Burst", "Small AoE fire attack.", 3) {
+        addSkill(new Skill("Fire Burst", "Small AoE fire attack.", 3, 15) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk());

@@ -6,9 +6,6 @@ import com.ror.gameutil.BattleView;
 import com.ror.gameutil.BattleUtility;
 import java.util.ArrayList;
 
-/**
- * Andrew, the starting playable character. Balanced stats.
- */
 public class Andrew extends Entity {
 
     public Andrew() {
@@ -22,23 +19,31 @@ public class Andrew extends Entity {
         this.skills = new ArrayList<>();
 
         // Skill 1: Punch (Basic Attack)
-        this.skills.add(new Skill("ChronoSlash", "A time slash.", 0) {
+        this.skills.add(new Skill("ChronoSlash", "A time slash.", 0, 30) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 // target is defined ONLY within this apply method's scope
                 int calculatedAttack = (int)(user.getAtk() * 1.0);
                 int damage = BattleUtility.calculateDamage(calculatedAttack, target.getDef());
                 target.takeDamage(damage);
-                view.logMessage("👊 " + user.getName() + " punches " + target.getName() + ", dealing " + damage + " damage.");
+                view.logMessage("👊 " + user.getName() + " Slashes " + target.getName() + ", dealing " + damage + " damage.");
             }
         });
 
         // Skill 2: Guard (Defense Buff)
-        this.skills.add(new Skill("Guard", "Raises defense for one turn.", 1) {
+        this.skills.add(new Skill("Shield", "Raises defense for one turn.", 1, 0) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 user.setShieldActive(true);
                 view.logMessage("🛡️ " + user.getName() + " enters a defensive stance.");
+            }
+        });
+
+        this.skills.add(new Skill("Chrono bash", "Attack with your bare fists", 1, 0) {
+            @Override
+            public void apply(Entity user, Entity target, BattleView view) {
+                user.setShieldActive(true);
+                view.logMessage("🛡️ " + user.getName() + " Heals 40% of hp.");
             }
         });
     }

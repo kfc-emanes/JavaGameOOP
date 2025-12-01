@@ -3,15 +3,17 @@ package com.ror.gamemodel;
 import com.ror.gameutil.BattleView;
 
 public abstract class Skill {
-    private final String name;
-    private final String description;
-    private final int maxCooldown;
-    private int currentCooldown;
+    public final String name;
+    public final String description;
+    public final int maxCooldown;
+    public int currentCooldown;
+    public int atk;
 
-    public Skill(String name, String description, int maxCooldown) {
+    public Skill(String name, String description, int maxCooldown, int atk) {
         this.name = name;
         this.description = description;
         this.maxCooldown = maxCooldown;
+        this.atk = atk;
         this.currentCooldown = 0;
     }
 

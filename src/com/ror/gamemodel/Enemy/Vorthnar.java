@@ -19,7 +19,7 @@ public class Vorthnar extends Entity {
         this.skills = new ArrayList<>();
 
         // Skill 1: Eternal Blast (Single Normal Attack)
-        this.skills.add(new Skill("Eternal Blast", "A standard, powerful energy attack.", 1) {
+        this.skills.add(new Skill("Eternal Blast", "A standard, powerful energy attack.", 1, 55) {
             
             @Override
             public void apply(Entity user, Entity target, BattleView view) {

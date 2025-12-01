@@ -14,7 +14,7 @@ public class Goblin extends Entity {
     @Override
     protected void setupSkills() {
         // Goblin only has one basic attack
-        addSkill(new Skill("Claw Swipe", "A quick claw attack.", 1) {
+        addSkill(new Skill("Claw Swipe", "A quick claw attack.", 1, 12) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk());
