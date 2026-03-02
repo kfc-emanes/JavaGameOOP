@@ -14,7 +14,7 @@ public class FlameWarrior extends Entity {
     @Override
     protected void setupSkills() {
         // Skill 1: Inferno Strike
-        addSkill(new Skill("Inferno Strike", "Deals heavy fire damage.", 1, 50) {
+        addSkill(new Skill("Inferno Strike", "Deals heavy fire damage.", 1) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 20); // scales with atk
@@ -22,7 +22,7 @@ public class FlameWarrior extends Entity {
         });
 
         // Skill 2: Flame Roar
-        addSkill(new Skill("Flame Roar", "Damages the enemy with a fiery shout.", 0, 35) {
+        addSkill(new Skill("Flame Roar", "Damages the enemy with a fiery shout.", 0) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 10);
@@ -30,7 +30,7 @@ public class FlameWarrior extends Entity {
         });
 
         // Skill 3: Molten Fist
-        addSkill(new Skill("Molten Fist", "A powerful molten punch.", 2, 40) {
+        addSkill(new Skill("Molten Fist", "A powerful molten punch.", 2) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 25);

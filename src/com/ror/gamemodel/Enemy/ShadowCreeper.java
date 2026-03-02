@@ -14,7 +14,7 @@ public class ShadowCreeper extends Entity {
     @Override
     protected void setupSkills() {
         // Poison attack
-        addSkill(new Skill("Venom Strike", "Poisons the target.", 2, 20) {
+        addSkill(new Skill("Venom Strike", "Poisons the target.", 2) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk());
@@ -23,7 +23,7 @@ public class ShadowCreeper extends Entity {
         });
 
         // Drain attack
-        addSkill(new Skill("Life Drain", "Steals health from the target.", 3,10) {
+        addSkill(new Skill("Life Drain", "Steals health from the target.", 3) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk());

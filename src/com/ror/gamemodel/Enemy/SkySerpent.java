@@ -13,14 +13,14 @@ public class SkySerpent extends Entity {
 
     @Override
     protected void setupSkills() {
-        addSkill(new Skill("Wing Slash", "Aerial strike with wings.", 2, 35) {
+        addSkill(new Skill("Wing Slash", "Aerial strike with wings.", 2) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 5);
             }
         });
 
-        addSkill(new Skill("Serpent’s Coil", "Constrains and damages the target.", 3, 25) {
+        addSkill(new Skill("Serpent’s Coil", "Constrains and damages the target.", 3) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk());

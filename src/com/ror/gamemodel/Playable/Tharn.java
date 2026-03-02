@@ -14,7 +14,7 @@ public class Tharn extends Entity {
     @Override
     protected void setupSkills() {
         // Skill 1: Earthslam
-        addSkill(new Skill("Earthslam", "Basic attack.", 1, 45) {
+        addSkill(new Skill("Earthslam", "Basic attack.", 1) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 10);
@@ -22,7 +22,7 @@ public class Tharn extends Entity {
         });
 
         // Skill 2: Rockskin
-        addSkill(new Skill("Rockskin", "Heals 40% of lost HP.", 3, 0) {
+        addSkill(new Skill("Rockskin", "Heals 40% of lost HP.", 3) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 int lostHP = user.getMaxHealth() - user.getCurrentHealth();
@@ -32,7 +32,7 @@ public class Tharn extends Entity {
         });
 
         // Skill 3: Seismic Shock
-        addSkill(new Skill("Seismic Shock", "Moderate damage to enemy.", 2, 40) {
+        addSkill(new Skill("Seismic Shock", "Moderate damage to enemy.", 2) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk() + 20);

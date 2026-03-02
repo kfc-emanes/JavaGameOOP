@@ -24,7 +24,7 @@ public class GeneralVulkrag extends Entity {
         this.skills = new ArrayList<>();
 
         // Skill 1: Flame Axe Swing (Single Normal Attack)
-        this.skills.add(new Skill("Flame Axe Swing", "A devastating swing with a giant flame axe.", 1, 45) {
+        this.skills.add(new Skill("Flame Axe Swing", "A devastating swing with a giant flame axe.", 1) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 int calculatedAttackPower = (int)(user.getAtk() * 1.4);

@@ -23,7 +23,7 @@ public class GeneralZephra extends Entity {
         this.skills = new ArrayList<>();
 
         // Skill 1: Lightning Bolt (Single Normal Attack)
-        this.skills.add(new Skill("Lightning Bolt", "A fierce magical attack using storm energy.", 1, 40) {
+        this.skills.add(new Skill("Lightning Bolt", "A fierce magical attack using storm energy.", 1) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
 

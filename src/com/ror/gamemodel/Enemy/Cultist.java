@@ -13,7 +13,7 @@ public class Cultist extends Entity {
 
     @Override
     protected void setupSkills() {
-        addSkill(new Skill("Dark Chant", "A sinister chant that damages the target.", 2, 10) {
+        addSkill(new Skill("Dark Chant", "A sinister chant that damages the target.", 2) {
             @Override
             public void apply(Entity user, Entity target, BattleView view) {
                 target.takeDamage(user.getAtk());

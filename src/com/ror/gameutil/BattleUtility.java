@@ -54,8 +54,8 @@ public class BattleUtility {
      * - defense: The target's raw defense value.
      * Returns: The final damage dealt.
      */
-    public static int calculateDamage(int atk, int defense) {
-        return Math.max(0, atk - defense);
+    public static int calculateDamage(int attack, int defense) {
+        return Math.max(0, attack - defense);
     }
 
     /*
